@@ -62,7 +62,7 @@ class ExpenseScreen extends StatelessWidget {
               child: dailyExpense.expenseList.isEmpty
                   ? const Center(
                       child: Text(
-                        'Not sold yet!',
+                        'Not yet!',
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 25,
