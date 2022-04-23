@@ -1,12 +1,18 @@
+import 'package:example/input_form/update_storage.dart';
+import 'package:example/model/shop_model_data.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 import '../constants.dart';
+import '../model/shop_model.dart';
 
 class StorageListItem extends StatelessWidget {
   final List storageList;
+
   StorageListItem({this.storageList});
 
   // final int index;
@@ -21,6 +27,9 @@ class StorageListItem extends StatelessWidget {
             parent: AlwaysScrollableScrollPhysics()),
         itemCount: storageList.length,
         itemBuilder: (BuildContext context, int index) {
+          // final quantity = Provider.of<ShopModelData>(context).currentQuantity;
+          // final adjustedQuantity = Provider.of<ShopModelData>(context)
+          //     .quantityManipulation(quantity, storageList[index].itemQuantity);
           return AnimationConfiguration.staggeredList(
             position: index,
             delay: const Duration(milliseconds: 100),
@@ -29,8 +38,69 @@ class StorageListItem extends StatelessWidget {
               curve: Curves.fastLinearToSlowEaseIn,
               horizontalOffset: -300,
               verticalOffset: -850,
-              child: GestureDetector(
-                onTap: () {},
+              child: Slidable(
+                endActionPane: ActionPane(
+                  motion: const ScrollMotion(),
+                  children: [
+                    const SizedBox(
+                      width: 50,
+                    ),
+                    IconButton(
+                      color: Colors.red,
+                      onPressed: () {
+                        Provider.of<ShopModelData>(context, listen: false)
+                            .deleteShopList(storageList[index].id);
+                        double totalMinus =
+                            Provider.of<ShopModelData>(context, listen: false)
+                                .minusTotalPrice(
+                                    double.parse(storageList[index].itemPrice));
+                        final updateExpense = ShopModel(
+                          id: storageList[index].id,
+                          itemName: storageList[index].itemName,
+                          itemDate: storageList[index].itemDate,
+                          itemPrice: storageList[index].itemPrice,
+                          itemQuantity: storageList[index].itemQuantity,
+                          total: totalMinus.toString(),
+                        );
+                        Provider.of<ShopModelData>(context, listen: false)
+                            .updateShopList(updateExpense);
+                      },
+                      icon: const Icon(
+                        Icons.delete_forever,
+                        size: 40,
+                      ),
+                    ),
+                  ],
+                ),
+                startActionPane: ActionPane(
+                  motion: const ScrollMotion(),
+                  children: [
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    IconButton(
+                      color: Colors.green,
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => UpdateStorage(
+                              index: storageList[index].id,
+                              existedItemName: storageList[index].itemName,
+                              existedItemDate: storageList[index].itemDate,
+                              existedItemPrice: storageList[index].itemPrice,
+                              existedItemQuantity:
+                                  storageList[index].itemQuantity,
+                            ),
+                          ),
+                        );
+                      },
+                      icon: const Icon(
+                        Icons.edit,
+                        size: 40,
+                      ),
+                    ),
+                  ],
+                ),
                 child: Container(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,

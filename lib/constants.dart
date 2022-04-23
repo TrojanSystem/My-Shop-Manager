@@ -38,3 +38,27 @@ const dailyIncomeStyle = TextStyle(
   letterSpacing: 1,
   fontWeight: FontWeight.w900,
 );
+const kkDropDown = TextStyle(
+  color: Colors.white,
+  fontWeight: FontWeight.w900,
+);
+const kkSummaryIncome = TextStyle(
+  color: Colors.green,
+  fontWeight: FontWeight.w900,
+  fontSize: 18,
+);
+const kkSummaryExpense = TextStyle(
+  color: Colors.red,
+  fontWeight: FontWeight.w900,
+  fontSize: 18,
+);
+const kkSummaryStyle = TextStyle(
+  color: Colors.black,
+  fontWeight: FontWeight.w900,
+  fontSize: 40,
+);
+const kkSummaryIncomeStyle = TextStyle(
+  color: Colors.black,
+  fontWeight: FontWeight.w900,
+  fontSize: 20,
+);

@@ -4,14 +4,27 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class AddExpense extends StatefulWidget {
-  const AddExpense({Key key}) : super(key: key);
+class UpdateExpense extends StatefulWidget {
+  final int index;
+  final String existedItemPrice;
+  final String existedItemName;
+  final String existedItemDate;
+  final String existedItemQuantity;
+
+  const UpdateExpense(
+      {Key key,
+      this.index,
+      this.existedItemPrice,
+      this.existedItemName,
+      this.existedItemDate,
+      this.existedItemQuantity})
+      : super(key: key);
 
   @override
-  State<AddExpense> createState() => _AddExpenseState();
+  State<UpdateExpense> createState() => _UpdateExpenseState();
 }
 
-class _AddExpenseState extends State<AddExpense> {
+class _UpdateExpenseState extends State<UpdateExpense> {
   void datePicker() {
     showDatePicker(
       context: context,
@@ -20,18 +33,18 @@ class _AddExpenseState extends State<AddExpense> {
       firstDate: DateTime(DateTime.now().month + 1),
     ).then((value) => setState(() {
           if (value != null) {
-            itemDate = value.toString();
+            updateDateTime = value.toString();
           } else {
-            itemDate = DateTime.now().toString();
+            updateDateTime = DateTime.now().toString();
           }
         }));
   }
 
   final formKey = GlobalKey<FormState>();
-  String itemName = '';
-  String itemQuantity = '';
-  double itemPrice = 0;
-  String itemDate = DateTime.now().toString();
+  String updateItemName = '';
+  String updateItemQuantity = '';
+  double updateItemPrice = 0;
+  String updateDateTime = DateTime.now().toString();
 
   @override
   Widget build(BuildContext context) {
@@ -72,6 +85,7 @@ class _AddExpenseState extends State<AddExpense> {
                     height: 10,
                   ),
                   TextFormField(
+                    initialValue: widget.existedItemName,
                     validator: (value) {
                       if (value.isEmpty) {
                         return 'Name can\'t be empty';
@@ -80,7 +94,7 @@ class _AddExpenseState extends State<AddExpense> {
                       }
                     },
                     onSaved: (value) {
-                      itemName = value;
+                      updateItemName = value;
                     },
                     decoration: InputDecoration(
                       hintText: 'Enter Name',
@@ -115,6 +129,7 @@ class _AddExpenseState extends State<AddExpense> {
                     height: 10,
                   ),
                   TextFormField(
+                    initialValue: widget.existedItemQuantity,
                     maxLines: 3,
                     validator: (value) {
                       if (value.isEmpty) {
@@ -124,7 +139,7 @@ class _AddExpenseState extends State<AddExpense> {
                       }
                     },
                     onSaved: (value) {
-                      itemQuantity = value;
+                      updateItemQuantity = value;
                     },
                     decoration: InputDecoration(
                       hintText: 'Enter Description',
@@ -159,6 +174,7 @@ class _AddExpenseState extends State<AddExpense> {
                     height: 10,
                   ),
                   TextFormField(
+                    initialValue: widget.existedItemPrice,
                     validator: (value) {
                       if (value.isEmpty) {
                         return 'Price can\'t be empty';
@@ -167,7 +183,7 @@ class _AddExpenseState extends State<AddExpense> {
                       }
                     },
                     onSaved: (value) {
-                      itemPrice = double.parse(value);
+                      updateItemPrice = double.parse(value);
                     },
                     decoration: InputDecoration(
                       hintText: 'Enter Price',
@@ -200,7 +216,7 @@ class _AddExpenseState extends State<AddExpense> {
                     icon: const Icon(Icons.calendar_today),
                   ),
                   Text(
-                    DateFormat.yMEd().format(DateTime.parse(itemDate)),
+                    DateFormat.yMEd().format(DateTime.parse(updateDateTime)),
                   ),
                 ],
               ),
@@ -212,13 +228,21 @@ class _AddExpenseState extends State<AddExpense> {
               onTap: () {
                 if (formKey.currentState.validate()) {
                   formKey.currentState.save();
-                  var model = ShopModel(
-                      itemDate: itemDate,
-                      itemName: itemName,
-                      itemPrice: itemPrice.toStringAsFixed(2),
-                      itemQuantity: itemQuantity);
+                  double total =
+                      Provider.of<ExpensesData>(context, listen: false)
+                          .updateTotalPrice(
+                              double.parse(widget.existedItemPrice),
+                              updateItemPrice);
+                  var updateModel = ShopModel(
+                    id: widget.index,
+                    itemDate: updateDateTime,
+                    itemName: updateItemName,
+                    itemPrice: updateItemPrice.toStringAsFixed(2),
+                    itemQuantity: updateItemQuantity,
+                    total: total.toStringAsFixed(2),
+                  );
                   Provider.of<ExpensesData>(context, listen: false)
-                      .addExpenseList(model);
+                      .updateExpenseList(updateModel);
                   Navigator.of(context).pop();
                 }
               },
@@ -227,12 +251,12 @@ class _AddExpenseState extends State<AddExpense> {
                 width: double.infinity,
                 height: 60.0,
                 decoration: BoxDecoration(
-                  color: Colors.green[500],
+                  color: Colors.red[500],
                   borderRadius: BorderRadius.circular(15.0),
                 ),
                 child: const Center(
                   child: Text(
-                    'Save Expense',
+                    'Update Expense',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18,

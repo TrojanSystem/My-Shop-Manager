@@ -11,8 +11,8 @@ class HomePage extends StatelessWidget {
   HomePage({Key key}) : super(key: key);
   final List homePageScreen = [
     const StorageScreen(),
-    const DailySellScreen(),
-    const ExpenseScreen(),
+    DailySellScreen(),
+    ExpenseScreen(),
   ];
 
   @override

@@ -9,7 +9,7 @@ class DatabaseDailySell {
       join(await getDatabasesPath(), 'dailySellDatabase.db'),
       onCreate: (db, version) async {
         await db.execute(
-          '''CREATE TABLE dailySellTable(id INTEGER PRIMARY KEY, itemName TEXT, itemPrice TEXT, itemDate TEXT, itemQuantity TEXT)''',
+          '''CREATE TABLE dailySellTable(id INTEGER PRIMARY KEY, itemName TEXT,total TEXT, itemPrice TEXT, itemDate TEXT, itemQuantity TEXT)''',
         );
       },
       version: 1,

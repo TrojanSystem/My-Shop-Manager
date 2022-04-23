@@ -1,3 +1,4 @@
+import 'package:example/model/daily_sell_data.dart';
 import 'package:example/model/shop_model.dart';
 import 'package:example/model/shop_model_data.dart';
 import 'package:flutter/material.dart';
@@ -211,13 +212,21 @@ class _AddStorageItemState extends State<AddStorageItem> {
               onTap: () {
                 if (formKey.currentState.validate()) {
                   formKey.currentState.save();
-                  var model = ShopModel(
-                      itemDate: itemDate,
-                      itemName: itemName,
-                      itemPrice: itemPrice.toStringAsFixed(2),
-                      itemQuantity: itemQuantity);
                   Provider.of<ShopModelData>(context, listen: false)
-                      .addShopList(model);
+                      .currentQuantity = double.parse(itemQuantity);
+                  double total =
+                      Provider.of<DailySellData>(context, listen: false)
+                          .addTotalPrice(itemPrice);
+
+                  var model = ShopModel(
+                    itemDate: itemDate,
+                    itemName: itemName,
+                    itemPrice: itemPrice.toStringAsFixed(2),
+                    itemQuantity: itemQuantity,
+                    total: total.toStringAsFixed(2),
+                  );
+                  Provider.of<DailySellData>(context, listen: false)
+                      .addDailySellList(model);
                   Navigator.of(context).pop();
                 }
               },

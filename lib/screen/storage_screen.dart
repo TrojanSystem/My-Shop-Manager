@@ -1,3 +1,4 @@
+import 'package:example/item/drawer_item.dart';
 import 'package:example/model/shop_model_data.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -60,6 +61,7 @@ class StorageScreen extends StatelessWidget {
                     ),
                   )
                 : StorageListItem(storageList: data.shopList),
+        drawer: DrawerItem(),
       ),
     );
   }

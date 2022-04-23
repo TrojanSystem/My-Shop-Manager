@@ -23,10 +23,10 @@ class MyApp extends StatelessWidget {
           create: (context) => ShopModelData()..loadShopList(),
         ),
         ChangeNotifierProvider(
-          create: (context) => DailySellData()..loadDailySellList(),
+          create: (context) => ExpensesData()..loadExpenseList(),
         ),
         ChangeNotifierProvider(
-          create: (context) => ExpensesData()..loadExpenseList(),
+          create: (context) => DailySellData()..loadDailySellList(),
         ),
         ChangeNotifierProvider(
           create: (context) => FunctionalityData(),

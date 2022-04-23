@@ -26,9 +26,18 @@ class _MyCustomBottomNavigationBarState
           index: data.currentIndex,
           backgroundColor: const Color.fromRGBO(3, 83, 151, 1),
           items: const [
-            Icon(Icons.storage),
-            Icon(Icons.home),
-            Icon(Icons.library_books),
+            Image(
+              image: AssetImage('images/warehouse.png'),
+              width: 30,
+            ),
+            Image(
+              image: AssetImage('images/selling.png'),
+              width: 30,
+            ),
+            Image(
+              image: AssetImage('images/expenses.png'),
+              width: 30,
+            ),
           ],
         ),
       ),

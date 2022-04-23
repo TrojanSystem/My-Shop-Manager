@@ -1,6 +1,11 @@
+import 'package:example/model/expenses_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+
+import '../input_form/update_expense.dart';
+import '../model/shop_model.dart';
 
 class ExpenseItem extends StatelessWidget {
   final List dailyExpense;
@@ -62,26 +67,97 @@ class ExpenseItem extends StatelessWidget {
                           ),
                           Container(
                             margin: const EdgeInsets.only(left: 20, top: 15),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              mainAxisSize: MainAxisSize.min,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  dailyExpense[index].itemName,
-                                  style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      dailyExpense[index].itemName,
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      height: 5,
+                                    ),
+                                    Text(
+                                      '${dailyExpense[index].itemQuantity}',
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                Text(
-                                  'x ${dailyExpense[index].itemQuantity}',
-                                  style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                Row(
+                                  children: [
+                                    IconButton(
+                                      onPressed: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (_) => UpdateExpense(
+                                              index: dailyExpense[index].id,
+                                              existedItemName:
+                                                  dailyExpense[index].itemName,
+                                              existedItemDate:
+                                                  dailyExpense[index].itemDate,
+                                              existedItemPrice:
+                                                  dailyExpense[index].itemPrice,
+                                              existedItemQuantity:
+                                                  dailyExpense[index]
+                                                      .itemQuantity,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      icon: const Icon(
+                                        Icons.edit,
+                                        color: Colors.green,
+                                        size: 25,
+                                      ),
+                                    ),
+                                    IconButton(
+                                      onPressed: () async {
+                                        Provider.of<ExpensesData>(context,
+                                                listen: false)
+                                            .deleteExpenseList(
+                                                dailyExpense[index].id);
+                                        double totalMinus = Provider.of<
+                                                    ExpensesData>(context,
+                                                listen: false)
+                                            .minusTotalPrice(double.parse(
+                                                dailyExpense[index].itemPrice));
+                                        final updateExpense = ShopModel(
+                                          id: dailyExpense[index].id,
+                                          itemName:
+                                              dailyExpense[index].itemName,
+                                          itemDate:
+                                              dailyExpense[index].itemDate,
+                                          itemPrice:
+                                              dailyExpense[index].itemPrice,
+                                          itemQuantity:
+                                              dailyExpense[index].itemQuantity,
+                                          total: totalMinus.toString(),
+                                        );
+                                        Provider.of<ExpensesData>(context,
+                                                listen: false)
+                                            .updateExpenseList(updateExpense);
+                                      },
+                                      icon: const Icon(
+                                        Icons.delete_forever,
+                                        color: Colors.red,
+                                        size: 25,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),

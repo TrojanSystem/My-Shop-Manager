@@ -9,7 +9,7 @@ class DatabaseShopStore {
       join(await getDatabasesPath(), 'shopModelDatabase.db'),
       onCreate: (db, version) async {
         await db.execute(
-          '''CREATE TABLE shopModelDatabaseTable(id INTEGER PRIMARY KEY, itemName TEXT, itemPrice TEXT, itemDate TEXT, itemQuantity TEXT)''',
+          '''CREATE TABLE shopModelDatabaseTable(id INTEGER PRIMARY KEY, itemName TEXT,total TEXT, itemPrice TEXT, itemDate TEXT, itemQuantity TEXT)''',
         );
       },
       version: 1,
