@@ -13,6 +13,11 @@ class StorageScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final yearFilter = Provider.of<ShopModelData>(context).shopList;
+    final result = yearFilter
+        .where((element) =>
+            DateTime.parse(element.itemDate).year == DateTime.now().year)
+        .toList();
     return Consumer<ShopModelData>(
       builder: (context, data, child) => Scaffold(
         backgroundColor: const Color.fromRGBO(3, 83, 151, 1),
@@ -60,8 +65,8 @@ class StorageScreen extends StatelessWidget {
                       color: Colors.red,
                     ),
                   )
-                : StorageListItem(storageList: data.shopList),
-        drawer: DrawerItem(),
+                : StorageListItem(storageList: result),
+        drawer: const DrawerItem(),
       ),
     );
   }

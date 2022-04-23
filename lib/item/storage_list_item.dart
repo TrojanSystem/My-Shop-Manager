@@ -20,16 +20,33 @@ class StorageListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double _w = MediaQuery.of(context).size.width;
+    var FilterName = storageList.map((e) => e.itemName).toSet().toList();
+
     return AnimationLimiter(
       child: ListView.builder(
         padding: EdgeInsets.all(_w / 30),
         physics: const BouncingScrollPhysics(
             parent: AlwaysScrollableScrollPhysics()),
-        itemCount: storageList.length,
+        itemCount: FilterName.length,
         itemBuilder: (BuildContext context, int index) {
-          // final quantity = Provider.of<ShopModelData>(context).currentQuantity;
+          // final quantity = Provider.of<ShopModelData>(context).shopList;
           // final adjustedQuantity = Provider.of<ShopModelData>(context)
           //     .quantityManipulation(quantity, storageList[index].itemQuantity);
+
+          var filteredName = storageList
+              .where((element) => element.itemName == FilterName[index])
+              .toSet();
+          var filterPrice = filteredName.map((e) => e.itemPrice).toList();
+          var sumPrice = 0.0;
+          for (int x = 0; x < filteredName.length; x++) {
+            sumPrice += double.parse(filterPrice[x]);
+          }
+          var filterQuantity = filteredName.map((e) => e.itemQuantity).toList();
+          var sumQuantity = 0.0;
+          for (int x = 0; x < filteredName.length; x++) {
+            sumQuantity += double.parse(filterQuantity[x]);
+          }
+
           return AnimationConfiguration.staggeredList(
             position: index,
             delay: const Duration(milliseconds: 100),
@@ -110,7 +127,7 @@ class StorageListItem extends StatelessWidget {
                           child: Column(
                             children: [
                               Text(
-                                storageList[index].itemPrice,
+                                sumPrice.toStringAsFixed(2),
                                 style: storageItemMoney,
                               ),
                               const SizedBox(
@@ -137,7 +154,7 @@ class StorageListItem extends StatelessWidget {
                             title: Padding(
                               padding: const EdgeInsets.only(bottom: 8.0),
                               child: Text(
-                                storageList[index].itemName,
+                                FilterName[index],
                                 style: storageItemName,
                               ),
                             ),
@@ -148,7 +165,7 @@ class StorageListItem extends StatelessWidget {
                               style: storageItemDate,
                             ),
                             trailing: Text(
-                              'x ${storageList[index].itemQuantity}',
+                              'x ${sumQuantity}',
                               style: storageItemQuantity,
                             ),
                           ),

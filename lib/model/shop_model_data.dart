@@ -59,11 +59,6 @@ class ShopModelData extends ChangeNotifier {
     return totalPrice;
   }
 
-  double quantityManipulation(quantity, existedQuantity) {
-    currentQuantity = existedQuantity - quantity;
-    return currentQuantity;
-  }
-
   List daysOfMonth = [
     {
       'mon': 'Day 1',

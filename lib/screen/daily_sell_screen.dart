@@ -33,19 +33,27 @@ class _DailySellScreenState extends State<DailySellScreen> {
         .where((element) =>
             DateTime.parse(element.itemDate).day == selectedDayOfMonth)
         .toList();
+
     var totSell = result
         .where((element) =>
             DateTime.parse(element.itemDate).month == DateTime.now().month)
         .toList();
+    var totalQuantitySells = totSell.map((e) => e.itemQuantity).toList();
+
     var totalSells = totSell.map((e) => e.itemPrice).toList();
     var totSum = 0.0;
     for (int xx = 0; xx < totalSells.length; xx++) {
-      totSum += double.parse(totalSells[xx]);
+      totSum +=
+          (double.parse(totalSells[xx]) * double.parse(totalQuantitySells[xx]));
     }
+    var totalQuantityDailySells =
+        dailySells.map((e) => e.itemQuantity).toList();
+
     var totalDailySells = dailySells.map((e) => e.itemPrice).toList();
     var totDailySum = 0.0;
     for (int xx = 0; xx < totalDailySells.length; xx++) {
-      totDailySum += double.parse(totalDailySells[xx]);
+      totDailySum += (double.parse(totalDailySells[xx]) *
+          double.parse(totalQuantityDailySells[xx]));
     }
     return Consumer<DailySellData>(
       builder: (context, dailySell, child) => Scaffold(

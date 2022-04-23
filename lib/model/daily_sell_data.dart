@@ -7,7 +7,8 @@ class DailySellData extends ChangeNotifier {
   double totalPrice = 0;
   double totalIncomePrice = 0;
   bool _isLoading = true;
-
+  double soldQuantity = 0;
+  double currentQuantity = 0;
   List<ShopModel> _dailySellList = [];
 
   List<ShopModel> get dailySellList => _dailySellList;
@@ -54,6 +55,11 @@ class DailySellData extends ChangeNotifier {
     totalPrice -= price;
     totalPrice += updatePrice;
     return totalPrice;
+  }
+
+  double quantityManipulation(quantity, existedQuantity) {
+    currentQuantity = existedQuantity - quantity;
+    return currentQuantity;
   }
 
   List daysOfMonth = [

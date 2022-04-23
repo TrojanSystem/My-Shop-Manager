@@ -212,6 +212,14 @@ class _AddStorageItemState extends State<AddStorageItem> {
               onTap: () {
                 if (formKey.currentState.validate()) {
                   formKey.currentState.save();
+
+                  final dataGetter =
+                      Provider.of<ShopModelData>(context, listen: false)
+                          .shopList;
+                  final result = dataGetter
+                      .where((element) => element.itemName == itemName)
+                      .toList();
+
                   Provider.of<ShopModelData>(context, listen: false)
                       .currentQuantity = double.parse(itemQuantity);
                   double total =
