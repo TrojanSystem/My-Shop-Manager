@@ -1,10 +1,13 @@
-import 'package:example/model/daily_sell_data.dart';
-import 'package:example/model/expenses_data.dart';
-import 'package:example/model/shop_model_data.dart';
+import 'package:example/expense_data/expenses_data.dart';
 import 'package:example/screen/home_page_screen.dart';
+import 'package:example/sold_items_data/daily_sell_data.dart';
+import 'package:example/sold_items_data/sold_item_pdf_report.dart';
+import 'package:example/storage/shop_model_data.dart';
+import 'package:example/storage/storage_pdf_report.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'expense_data/daily_expense_pdf_report.dart';
 import 'model/functionality_data.dart';
 
 void main() {
@@ -21,6 +24,15 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(
           create: (context) => ShopModelData()..loadShopList(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => FileHandler(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => FileHandlerForExpense(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => FileHandlerForStorage(),
         ),
         ChangeNotifierProvider(
           create: (context) => ExpensesData()..loadExpenseList(),

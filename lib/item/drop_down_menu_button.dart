@@ -7,21 +7,24 @@ class DropDownMenuButton extends StatelessWidget {
   final Function button_2;
   final Function button_3;
   final Function button_4;
+  final Color primaryColor;
 
   DropDownMenuButton(
-      {this.button_1, this.button_2, this.button_3, this.button_4});
+      {this.button_1,
+      this.button_2,
+      this.button_3,
+      this.button_4,
+      this.primaryColor});
 
   Widget build(BuildContext context) {
-    final primaryColor = Theme.of(context).primaryColor;
-
     return FabCircularMenu(
       key: fabKey,
       // Cannot be `Alignment.center`
-      alignment: Alignment.topRight,
-      ringColor: const Color.fromRGBO(3, 83, 151, 1).withOpacity(0.7),
-      ringDiameter: 500.0,
+      alignment: Alignment.centerRight,
+      ringColor: const Color.fromRGBO(3, 83, 151, 1).withOpacity(0.8),
+      ringDiameter: 430.0,
       ringWidth: 150.0,
-      fabSize: 64.0,
+      fabSize: 50.0,
       fabElevation: 8.0,
       fabIconBorder: const CircleBorder(),
       // Also can use specific color based on wether
@@ -29,16 +32,16 @@ class DropDownMenuButton extends StatelessWidget {
       // fabOpenColor: Colors.white
       // fabCloseColor: Colors.white
       // These properties take precedence over fabColor
-      fabColor: Colors.white,
-      fabOpenIcon: Icon(Icons.menu, color: primaryColor),
-      fabCloseIcon: Icon(Icons.close, color: primaryColor),
-      fabMargin: const EdgeInsets.all(16.0),
+      fabColor: primaryColor,
+      fabOpenIcon: const Icon(Icons.menu, color: Colors.white),
+      fabCloseIcon: const Icon(Icons.close, color: Colors.white),
+      fabMargin: const EdgeInsets.fromLTRB(16.0, 45, 16, 16),
       animationDuration: const Duration(milliseconds: 800),
       animationCurve: Curves.easeInOutCirc,
       onDisplayChange: (isOpen) {},
       children: <Widget>[
         Container(
-          padding: const EdgeInsets.fromLTRB(24.0, 100, 24, 24),
+          // padding: const EdgeInsets.fromLTRB(24.0, 100, 24, 24),
           child: RawMaterialButton(
             fillColor: Colors.green,
             onPressed: () {
@@ -60,7 +63,8 @@ class DropDownMenuButton extends StatelessWidget {
             fabKey.currentState.close();
           },
           shape: const CircleBorder(),
-          padding: const EdgeInsets.fromLTRB(24.0, 50, 24, 24),
+          //  padding: const EdgeInsets.fromLTRB(24.0, 50, 24, 24),
+          padding: const EdgeInsets.all(24.0),
           child: const Image(
             image: AssetImage('images/pdf.png'),
             width: 40,
@@ -72,7 +76,7 @@ class DropDownMenuButton extends StatelessWidget {
             fabKey.currentState.close();
           },
           shape: const CircleBorder(),
-          padding: const EdgeInsets.all(24.0),
+          //padding: const EdgeInsets.all(24.0),
           child: const Image(
             image: AssetImage('images/check-list.png'),
             width: 50,

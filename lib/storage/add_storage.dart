@@ -1,18 +1,17 @@
-import 'package:example/model/daily_sell_data.dart';
 import 'package:example/model/shop_model.dart';
-import 'package:example/model/shop_model_data.dart';
+import 'package:example/storage/shop_model_data.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class AddStorageItem extends StatefulWidget {
-  const AddStorageItem({Key key}) : super(key: key);
+class AddStorageList extends StatefulWidget {
+  const AddStorageList({Key key}) : super(key: key);
 
   @override
-  State<AddStorageItem> createState() => _AddStorageItemState();
+  State<AddStorageList> createState() => _AddStorageListState();
 }
 
-class _AddStorageItemState extends State<AddStorageItem> {
+class _AddStorageListState extends State<AddStorageList> {
   void datePicker() {
     showDatePicker(
       context: context,
@@ -44,7 +43,7 @@ class _AddStorageItemState extends State<AddStorageItem> {
         toolbarHeight: 80,
         centerTitle: true,
         title: const Text(
-          'Daily Sell',
+          'Storage',
           style: TextStyle(
             fontSize: 22,
             color: Colors.black,
@@ -212,29 +211,17 @@ class _AddStorageItemState extends State<AddStorageItem> {
               onTap: () {
                 if (formKey.currentState.validate()) {
                   formKey.currentState.save();
-
-                  final dataGetter =
-                      Provider.of<ShopModelData>(context, listen: false)
-                          .shopList;
-                  final result = dataGetter
-                      .where((element) => element.itemName == itemName)
-                      .toList();
-
-                  Provider.of<ShopModelData>(context, listen: false)
-                      .currentQuantity = double.parse(itemQuantity);
                   double total =
-                      Provider.of<DailySellData>(context, listen: false)
-                          .addTotalPrice(itemPrice);
-
+                      Provider.of<ShopModelData>(context, listen: false)
+                          .totalQuantity;
+                  print('total $total');
                   var model = ShopModel(
-                    itemDate: itemDate,
-                    itemName: itemName,
-                    itemPrice: itemPrice.toStringAsFixed(2),
-                    itemQuantity: itemQuantity,
-                    total: total.toStringAsFixed(2),
-                  );
-                  Provider.of<DailySellData>(context, listen: false)
-                      .addDailySellList(model);
+                      itemDate: itemDate,
+                      itemName: itemName,
+                      itemPrice: itemPrice.toStringAsFixed(2),
+                      itemQuantity: itemQuantity);
+                  Provider.of<ShopModelData>(context, listen: false)
+                      .addShopList(model);
                   Navigator.of(context).pop();
                 }
               },
@@ -248,7 +235,7 @@ class _AddStorageItemState extends State<AddStorageItem> {
                 ),
                 child: const Center(
                   child: Text(
-                    'Sold',
+                    'Add to Store',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18,

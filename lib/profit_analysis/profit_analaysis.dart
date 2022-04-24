@@ -1,7 +1,7 @@
-import 'package:example/model/daily_sell_data.dart';
-import 'package:example/model/expenses_data.dart';
-import 'package:example/profit_analysis/summary_expense_list.dart';
-import 'package:example/profit_analysis/summary_income_list.dart';
+import 'package:example/expense_data/expenses_data.dart';
+import 'package:example/expense_data/summary_expense_list.dart';
+import 'package:example/sold_items_data/daily_sell_data.dart';
+import 'package:example/sold_items_data/summary_income_list.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';

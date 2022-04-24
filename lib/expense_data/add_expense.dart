@@ -1,4 +1,4 @@
-import 'package:example/model/expenses_data.dart';
+import 'package:example/expense_data/expenses_data.dart';
 import 'package:example/model/shop_model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';

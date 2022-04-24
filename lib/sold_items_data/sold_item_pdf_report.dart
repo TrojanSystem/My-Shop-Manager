@@ -3,31 +3,28 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 
-class FileModel {
+class SoldItemPDFReport {
   String id;
   String name;
-  String title;
+  String quantity;
   String date;
   String price;
-  String phone;
 
-  FileModel(
-      {this.id, this.date, this.title, this.price, this.name, this.phone});
+  SoldItemPDFReport({this.id, this.date, this.quantity, this.price, this.name});
 }
 
 class FileHandler extends ChangeNotifier {
   //final helper = DatabaseHelper.instance;
 
-  List<FileModel> fileList = [];
+  List<SoldItemPDFReport> fileList = [];
 
   // void initializeOptions(List<dynamic> fileList) {
   //   this.fileList = fileList;
   //   notifyListeners();
   // }
-  void addLabour(FileModel model) {
+  void addLabour(SoldItemPDFReport model) {
     fileList.insert(0, model);
     notifyListeners();
   }
@@ -45,14 +42,14 @@ class FileHandler extends ChangeNotifier {
 // Create a PDF grid class to add tables.
     final PdfGrid grid = PdfGrid();
 // Specify the grid column count.
-    grid.columns.add(count: 4);
+    grid.columns.add(count: 5);
 // Add a grid header row.
     final PdfGridRow headerRow = grid.headers.add(1)[0];
-    // headerRow.cells[0].value = 'Labour ID';
-    headerRow.cells[0].value = 'Item Name';
-    headerRow.cells[1].value = 'Item Price';
-    headerRow.cells[2].value = 'Item Quantity';
-    headerRow.cells[3].value = 'Item Date';
+    headerRow.cells[0].value = 'ID';
+    headerRow.cells[1].value = 'Item Name';
+    headerRow.cells[2].value = 'Item Price';
+    headerRow.cells[3].value = 'Item Quantity';
+    headerRow.cells[4].value = 'Item Date';
 
 // Set header font.
     headerRow.style.font =
@@ -61,11 +58,11 @@ class FileHandler extends ChangeNotifier {
 
     for (int x = 0; x < fileList.length; x++) {
       PdfGridRow row = grid.rows.add();
-      // row.cells[0].value = fileList[x].id;
-      row.cells[0].value = fileList[x].name;
-      row.cells[1].value = fileList[x].title;
-      row.cells[2].value = fileList[x].price;
-      row.cells[3].value = fileList[x].phone;
+      row.cells[0].value = fileList[x].id;
+      row.cells[1].value = fileList[x].name;
+      row.cells[2].value = fileList[x].quantity;
+      row.cells[3].value = fileList[x].price;
+
       row.cells[4].value = fileList[x].date;
     }
 
@@ -77,7 +74,7 @@ class FileHandler extends ChangeNotifier {
 // Save the document.
     List<int> bytes = document.save();
     document.dispose();
-    saveAndLaunch(bytes, 'ShopStore Report.pdf');
+    saveAndLaunch(bytes, 'Sold Item Report.pdf');
     // File('PDFTable.pdf').writeAsBytes(document.save());
 // Dispose the document.
     document.dispose();

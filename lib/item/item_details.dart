@@ -1,5 +1,7 @@
-import 'package:example/input_form/update_storage.dart';
-import 'package:example/model/shop_model_data.dart';
+import 'package:example/sold_items_data/daily_sell_data.dart';
+import 'package:example/storage/shop_model_data.dart';
+import 'package:example/storage/storage_pdf_report.dart';
+import 'package:example/storage/update_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -10,43 +12,28 @@ import 'package:provider/provider.dart';
 import '../constants.dart';
 import '../model/shop_model.dart';
 
-class StorageListItem extends StatelessWidget {
+class ItemDetails extends StatelessWidget {
   final List storageList;
+  final int length;
+  final String witchButtonPressed;
 
-  StorageListItem({this.storageList});
+  ItemDetails({this.storageList, this.length, this.witchButtonPressed});
 
   // final int index;
 
   @override
   Widget build(BuildContext context) {
+    final adjusted = Provider.of<DailySellData>(context).currentQuantity;
     double _w = MediaQuery.of(context).size.width;
-    var FilterName = storageList.map((e) => e.itemName).toSet().toList();
 
+    final List<StoragePDFReport> newLabour = [];
     return AnimationLimiter(
       child: ListView.builder(
         padding: EdgeInsets.all(_w / 30),
         physics: const BouncingScrollPhysics(
             parent: AlwaysScrollableScrollPhysics()),
-        itemCount: FilterName.length,
+        itemCount: length,
         itemBuilder: (BuildContext context, int index) {
-          // final quantity = Provider.of<ShopModelData>(context).shopList;
-          // final adjustedQuantity = Provider.of<ShopModelData>(context)
-          //     .quantityManipulation(quantity, storageList[index].itemQuantity);
-
-          var filteredName = storageList
-              .where((element) => element.itemName == FilterName[index])
-              .toSet();
-          var filterPrice = filteredName.map((e) => e.itemPrice).toList();
-          var sumPrice = 0.0;
-          for (int x = 0; x < filteredName.length; x++) {
-            sumPrice += double.parse(filterPrice[x]);
-          }
-          var filterQuantity = filteredName.map((e) => e.itemQuantity).toList();
-          var sumQuantity = 0.0;
-          for (int x = 0; x < filteredName.length; x++) {
-            sumQuantity += double.parse(filterQuantity[x]);
-          }
-
           return AnimationConfiguration.staggeredList(
             position: index,
             delay: const Duration(milliseconds: 100),
@@ -127,7 +114,7 @@ class StorageListItem extends StatelessWidget {
                           child: Column(
                             children: [
                               Text(
-                                sumPrice.toStringAsFixed(2),
+                                storageList[index].itemPrice,
                                 style: storageItemMoney,
                               ),
                               const SizedBox(
@@ -143,7 +130,7 @@ class StorageListItem extends StatelessWidget {
                           margin: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
                             color: Colors.blueAccent,
-                            borderRadius: BorderRadius.circular(30),
+                            borderRadius: BorderRadius.circular(10),
                           ),
                         ),
                       ),
@@ -154,7 +141,9 @@ class StorageListItem extends StatelessWidget {
                             title: Padding(
                               padding: const EdgeInsets.only(bottom: 8.0),
                               child: Text(
-                                FilterName[index],
+                                witchButtonPressed == 'sold'
+                                    ? storageList[index].itemName
+                                    : storageList[index].itemQuantity,
                                 style: storageItemName,
                               ),
                             ),
@@ -165,8 +154,15 @@ class StorageListItem extends StatelessWidget {
                               style: storageItemDate,
                             ),
                             trailing: Text(
-                              'x ${sumQuantity}',
-                              style: storageItemQuantity,
+                              witchButtonPressed == 'sold'
+                                  ? "x ${storageList[index].itemQuantity}"
+                                  : '',
+                              style: TextStyle(
+                                color: Colors.green[800],
+                                fontFamily: 'FjallaOne',
+                                fontSize: 25,
+                                fontWeight: FontWeight.w900,
+                              ),
                             ),
                           ),
                           decoration: const BoxDecoration(

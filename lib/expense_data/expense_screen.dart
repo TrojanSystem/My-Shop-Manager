@@ -1,30 +1,31 @@
-import 'package:example/item/drop_down_menu_button.dart';
-import 'package:example/model/daily_sell_data.dart';
+import 'package:example/expense_data/daily_expense_pdf_report.dart';
+import 'package:example/expense_data/expenses_data.dart';
 import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../constants.dart';
-import '../input_form/add_daily_sell.dart';
-import '../item/daily_sell_item.dart';
-import '../month_progress/month_progress_sold_item.dart';
+import '../item/drop_down_menu_button.dart';
 import '../profit_analysis/profit_analysis_screen.dart';
+import 'add_expense.dart';
+import 'daily_expense_item.dart';
+import 'month_progress_expense_item.dart';
 
-class DailySellScreen extends StatefulWidget {
-  DailySellScreen({Key key}) : super(key: key);
+class ExpenseScreen extends StatefulWidget {
+  ExpenseScreen({Key key}) : super(key: key);
 
   @override
-  State<DailySellScreen> createState() => _DailySellScreenState();
+  State<ExpenseScreen> createState() => _ExpenseScreenState();
 }
 
-class _DailySellScreenState extends State<DailySellScreen> {
+class _ExpenseScreenState extends State<ExpenseScreen> {
   int selectedDayOfMonth = DateTime.now().day;
   final GlobalKey<FabCircularMenuState> fabKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
-    final primaryColor = Theme.of(context).primaryColor;
-    final yearFilter = Provider.of<DailySellData>(context).dailySellList;
+    final yearFilter = Provider.of<ExpensesData>(context).expenseList;
     final result = yearFilter
         .where((element) =>
             DateTime.parse(element.itemDate).year == DateTime.now().year)
@@ -34,39 +35,44 @@ class _DailySellScreenState extends State<DailySellScreen> {
         .where((element) =>
             DateTime.parse(element.itemDate).month == DateTime.now().month)
         .toList();
-    var dailySells = todayMonthFilteredList
+    var dailyExpenses = todayMonthFilteredList
         .where((element) =>
             DateTime.parse(element.itemDate).day == selectedDayOfMonth)
         .toList();
-
     var totSell = result
         .where((element) =>
             DateTime.parse(element.itemDate).month == DateTime.now().month)
         .toList();
-    var totalQuantitySells = totSell.map((e) => e.itemQuantity).toList();
-
     var totalSells = totSell.map((e) => e.itemPrice).toList();
     var totSum = 0.0;
     for (int xx = 0; xx < totalSells.length; xx++) {
-      totSum +=
-          (double.parse(totalSells[xx]) * double.parse(totalQuantitySells[xx]));
+      totSum += double.parse(totalSells[xx]);
     }
-    var totalQuantityDailySells =
-        dailySells.map((e) => e.itemQuantity).toList();
-
-    var totalDailySells = dailySells.map((e) => e.itemPrice).toList();
+    var totalDailySells = dailyExpenses.map((e) => e.itemPrice).toList();
     var totDailySum = 0.0;
     for (int xx = 0; xx < totalDailySells.length; xx++) {
-      totDailySum += (double.parse(totalDailySells[xx]) *
-          double.parse(totalQuantityDailySells[xx]));
+      totDailySum += double.parse(totalDailySells[xx]);
     }
-    return Consumer<DailySellData>(
-      builder: (context, dailySell, child) => Scaffold(
+    final newLabour = dailyExpenses
+        .map((e) => DailyExpensePDFReport(
+              id: e.id.toString(),
+              price: e.itemPrice,
+              name: e.itemName,
+              description: e.itemQuantity,
+              date: DateFormat.yMMMEd().format(
+                DateTime.parse(e.itemDate),
+              ),
+            ))
+        .toList();
+    Provider.of<FileHandlerForExpense>(context, listen: false).fileList =
+        newLabour;
+    return Consumer<ExpensesData>(
+      builder: (context, dailyExpense, child) => Scaffold(
         backgroundColor: const Color.fromRGBO(3, 83, 151, 1),
         appBar: AppBar(
           backgroundColor: const Color.fromRGBO(3, 83, 151, 1),
           title: const Text(
-            'Daily Sell',
+            'Expenses',
             style: storageTitle,
           ),
           elevation: 0,
@@ -89,7 +95,7 @@ class _DailySellScreenState extends State<DailySellScreen> {
                           iconEnabledColor: Colors.white,
                           menuMaxHeight: 300,
                           value: selectedDayOfMonth,
-                          items: dailySell.daysOfMonth
+                          items: dailyExpense.daysOfMonth
                               .map(
                                 (e) => DropdownMenuItem(
                                   child: Text(
@@ -131,10 +137,10 @@ class _DailySellScreenState extends State<DailySellScreen> {
             ),
             Expanded(
               flex: 12,
-              child: dailySells.isEmpty
+              child: dailyExpenses.isEmpty
                   ? const Center(
                       child: Text(
-                        'Not sold yet!',
+                        'Not yet!',
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 25,
@@ -142,32 +148,36 @@ class _DailySellScreenState extends State<DailySellScreen> {
                         ),
                       ),
                     )
-                  : dailySell.isLoading
+                  : dailyExpense.isLoading
                       ? const Center(
                           child: CircularProgressIndicator(
                             color: Colors.red,
                           ),
                         )
-                      : DailySellItem(
-                          soldItem: dailySells,
-                          selectedDay: selectedDayOfMonth),
+                      : ExpenseItem(dailyExpense: dailyExpenses),
             ),
           ],
         ),
         floatingActionButton: Builder(
           builder: (context) => DropDownMenuButton(
+            primaryColor: Colors.red[800],
             button_1: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (_) => const AddStorageItem(),
+                  builder: (_) => const AddExpense(),
                 ),
               );
             },
-            button_2: () {},
+            button_2: () {
+              setState(() {
+                Provider.of<FileHandlerForExpense>(context, listen: false)
+                    .createTable();
+              });
+            },
             button_3: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (_) => MonthProgressSoldItem(),
+                  builder: (_) => MonthProgressItem(),
                 ),
               );
             },

@@ -1,9 +1,9 @@
-import 'package:example/model/expenses_data.dart';
+import 'package:example/expense_data/expenses_data.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../constants.dart';
-import 'month_progress_expense_detail_item.dart';
+import '../expense_data/month_progress_expense_detail_item.dart';
 
 class MonthProgressItem extends StatefulWidget {
   MonthProgressItem({Key key}) : super(key: key);

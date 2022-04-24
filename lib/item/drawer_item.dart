@@ -1,11 +1,12 @@
+import 'package:example/item/item_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../model/daily_sell_data.dart';
-import '../model/expenses_data.dart';
-import '../month_progress/month_progress_expense_item.dart';
-import '../month_progress/month_progress_sold_item.dart';
+import '../expense_data/expenses_data.dart';
+import '../expense_data/month_progress_expense_item.dart';
 import '../profit_analysis/profit_analysis_screen.dart';
+import '../sold_items_data/daily_sell_data.dart';
+import '../sold_items_data/month_progress_sold_item.dart';
 import 'daily_sell_drop_down_list_item.dart';
 
 class DrawerItem extends StatelessWidget {
@@ -79,7 +80,15 @@ class DrawerItem extends StatelessWidget {
                         ),
                       );
                     },
-                    buttonPressedDetail: () {},
+                    buttonPressedDetail: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => ItemScreen(
+                            witchButtonPressed: 'sold',
+                          ),
+                        ),
+                      );
+                    },
                   ),
                   DailySellDropDownListItem(
                     title: 'Expense Tracker',
@@ -92,7 +101,15 @@ class DrawerItem extends StatelessWidget {
                         ),
                       );
                     },
-                    buttonPressedDetail: () {},
+                    buttonPressedDetail: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => ItemScreen(
+                            witchButtonPressed: 'expense',
+                          ),
+                        ),
+                      );
+                    },
                   ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(22.0, 28, 8, 0),

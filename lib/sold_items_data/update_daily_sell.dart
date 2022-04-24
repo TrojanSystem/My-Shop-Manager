@@ -1,30 +1,36 @@
-import 'package:example/model/expenses_data.dart';
-import 'package:example/model/shop_model.dart';
+import 'package:example/sold_items_data/daily_sell_data.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class UpdateExpense extends StatefulWidget {
+import '../model/shop_model.dart';
+
+class UpdateDailySell extends StatefulWidget {
   final int index;
   final String existedItemPrice;
   final String existedItemName;
   final String existedItemDate;
   final String existedItemQuantity;
 
-  const UpdateExpense(
-      {Key key,
-      this.index,
-      this.existedItemPrice,
-      this.existedItemName,
+  UpdateDailySell(
+      {this.index,
+      this.existedItemQuantity,
       this.existedItemDate,
-      this.existedItemQuantity})
-      : super(key: key);
+      this.existedItemName,
+      this.existedItemPrice});
 
   @override
-  State<UpdateExpense> createState() => _UpdateExpenseState();
+  State<UpdateDailySell> createState() => _UpdateDailySellState();
 }
 
-class _UpdateExpenseState extends State<UpdateExpense> {
+class _UpdateDailySellState extends State<UpdateDailySell> {
+  final formKey = GlobalKey<FormState>();
+
+  String updateItemName = '';
+  String updateItemQuantity = '';
+  double updateItemPrice = 0;
+  String updateDateTime = DateTime.now().toString();
+
   void datePicker() {
     showDatePicker(
       context: context,
@@ -40,12 +46,6 @@ class _UpdateExpenseState extends State<UpdateExpense> {
         }));
   }
 
-  final formKey = GlobalKey<FormState>();
-  String updateItemName = '';
-  String updateItemQuantity = '';
-  double updateItemPrice = 0;
-  String updateDateTime = DateTime.now().toString();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,9 +54,8 @@ class _UpdateExpenseState extends State<UpdateExpense> {
         elevation: 0,
         backgroundColor: Colors.white,
         toolbarHeight: 80,
-        centerTitle: true,
         title: const Text(
-          'Expenses',
+          'Update Daily Sell',
           style: TextStyle(
             fontSize: 22,
             color: Colors.black,
@@ -75,7 +74,7 @@ class _UpdateExpenseState extends State<UpdateExpense> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Name',
+                    'Item Name',
                     style: TextStyle(
                       fontWeight: FontWeight.w900,
                       fontSize: 18,
@@ -88,7 +87,7 @@ class _UpdateExpenseState extends State<UpdateExpense> {
                     initialValue: widget.existedItemName,
                     validator: (value) {
                       if (value.isEmpty) {
-                        return 'Name can\'t be empty';
+                        return 'Item Name can\'t be empty';
                       } else {
                         return null;
                       }
@@ -97,7 +96,7 @@ class _UpdateExpenseState extends State<UpdateExpense> {
                       updateItemName = value;
                     },
                     decoration: InputDecoration(
-                      hintText: 'Enter Name',
+                      hintText: 'Enter the Item Name',
                       filled: true,
                       fillColor: Colors.grey[200],
                       enabledBorder: OutlineInputBorder(
@@ -119,7 +118,7 @@ class _UpdateExpenseState extends State<UpdateExpense> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Description',
+                    'Item Quantity',
                     style: TextStyle(
                       fontWeight: FontWeight.w900,
                       fontSize: 18,
@@ -130,10 +129,9 @@ class _UpdateExpenseState extends State<UpdateExpense> {
                   ),
                   TextFormField(
                     initialValue: widget.existedItemQuantity,
-                    maxLines: 3,
                     validator: (value) {
                       if (value.isEmpty) {
-                        return 'Description can\'t be empty';
+                        return 'Item Quantity can\'t be empty';
                       } else {
                         return null;
                       }
@@ -142,7 +140,7 @@ class _UpdateExpenseState extends State<UpdateExpense> {
                       updateItemQuantity = value;
                     },
                     decoration: InputDecoration(
-                      hintText: 'Enter Description',
+                      hintText: 'Enter the Item Quantity',
                       filled: true,
                       fillColor: Colors.grey[200],
                       enabledBorder: OutlineInputBorder(
@@ -164,7 +162,7 @@ class _UpdateExpenseState extends State<UpdateExpense> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Price',
+                    'Item Price',
                     style: TextStyle(
                       fontWeight: FontWeight.w900,
                       fontSize: 18,
@@ -177,7 +175,7 @@ class _UpdateExpenseState extends State<UpdateExpense> {
                     initialValue: widget.existedItemPrice,
                     validator: (value) {
                       if (value.isEmpty) {
-                        return 'Price can\'t be empty';
+                        return 'Item Price can\'t be empty';
                       } else {
                         return null;
                       }
@@ -186,7 +184,7 @@ class _UpdateExpenseState extends State<UpdateExpense> {
                       updateItemPrice = double.parse(value);
                     },
                     decoration: InputDecoration(
-                      hintText: 'Enter Price',
+                      hintText: 'Enter the Item Price',
                       filled: true,
                       fillColor: Colors.grey[200],
                       enabledBorder: OutlineInputBorder(
@@ -221,15 +219,12 @@ class _UpdateExpenseState extends State<UpdateExpense> {
                 ],
               ),
             ),
-            const SizedBox(
-              height: 30,
-            ),
             GestureDetector(
               onTap: () {
                 if (formKey.currentState.validate()) {
                   formKey.currentState.save();
                   double total =
-                      Provider.of<ExpensesData>(context, listen: false)
+                      Provider.of<DailySellData>(context, listen: false)
                           .updateTotalPrice(
                               double.parse(widget.existedItemPrice),
                               updateItemPrice);
@@ -241,8 +236,8 @@ class _UpdateExpenseState extends State<UpdateExpense> {
                     itemQuantity: updateItemQuantity,
                     total: total.toStringAsFixed(2),
                   );
-                  Provider.of<ExpensesData>(context, listen: false)
-                      .updateExpenseList(updateModel);
+                  Provider.of<DailySellData>(context, listen: false)
+                      .updateShopListDailySellList(updateModel);
                   Navigator.of(context).pop();
                 }
               },
@@ -251,12 +246,12 @@ class _UpdateExpenseState extends State<UpdateExpense> {
                 width: double.infinity,
                 height: 60.0,
                 decoration: BoxDecoration(
-                  color: Colors.red[500],
+                  color: Colors.green[500],
                   borderRadius: BorderRadius.circular(15.0),
                 ),
                 child: const Center(
                   child: Text(
-                    'Update Expense',
+                    'Update Sold Item',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18,

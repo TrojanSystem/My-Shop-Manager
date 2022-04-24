@@ -68,7 +68,7 @@ class _DailySellDropDownListItemState extends State<DailySellDropDownListItem> {
               height: isTapped
                   ? isExpanded
                       ? 100
-                      : 50
+                      : 60
                   : isExpanded
                       ? 200
                       : 150,
@@ -96,7 +96,7 @@ class _DailySellDropDownListItemState extends State<DailySellDropDownListItem> {
                                         widget.title,
                                         style: const TextStyle(
                                           color: Colors.white,
-                                          fontSize: 18,
+                                          fontSize: 20,
                                           fontWeight: FontWeight.w900,
                                         ),
                                       ),
@@ -128,6 +128,7 @@ class _DailySellDropDownListItemState extends State<DailySellDropDownListItem> {
                                 padding:
                                     const EdgeInsets.only(top: 10, left: 5),
                                 child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Padding(
                                         padding: const EdgeInsets.all(8.0),
@@ -137,7 +138,7 @@ class _DailySellDropDownListItemState extends State<DailySellDropDownListItem> {
                                               widget.title,
                                               style: const TextStyle(
                                                 color: Colors.white,
-                                                fontSize: 18,
+                                                fontSize: 20,
                                                 fontWeight: FontWeight.w900,
                                               ),
                                             ),
@@ -186,7 +187,7 @@ class _DailySellDropDownListItemState extends State<DailySellDropDownListItem> {
                               ),
                               Expanded(
                                 child: Padding(
-                                  padding: const EdgeInsets.only(left: 15.0),
+                                  padding: const EdgeInsets.only(left: 10.0),
                                   child: TextButton(
                                     onPressed: widget.buttonPressedDetail,
                                     child: Text(

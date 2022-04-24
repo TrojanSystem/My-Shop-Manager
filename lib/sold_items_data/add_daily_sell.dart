@@ -1,36 +1,17 @@
-import 'package:example/model/daily_sell_data.dart';
+import 'package:example/model/shop_model.dart';
+import 'package:example/sold_items_data/daily_sell_data.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import '../model/shop_model.dart';
-
-class UpdateDailySell extends StatefulWidget {
-  final int index;
-  final String existedItemPrice;
-  final String existedItemName;
-  final String existedItemDate;
-  final String existedItemQuantity;
-
-  UpdateDailySell(
-      {this.index,
-      this.existedItemQuantity,
-      this.existedItemDate,
-      this.existedItemName,
-      this.existedItemPrice});
+class AddStorageItem extends StatefulWidget {
+  const AddStorageItem({Key key}) : super(key: key);
 
   @override
-  State<UpdateDailySell> createState() => _UpdateDailySellState();
+  State<AddStorageItem> createState() => _AddStorageItemState();
 }
 
-class _UpdateDailySellState extends State<UpdateDailySell> {
-  final formKey = GlobalKey<FormState>();
-
-  String updateItemName = '';
-  String updateItemQuantity = '';
-  double updateItemPrice = 0;
-  String updateDateTime = DateTime.now().toString();
-
+class _AddStorageItemState extends State<AddStorageItem> {
   void datePicker() {
     showDatePicker(
       context: context,
@@ -39,12 +20,18 @@ class _UpdateDailySellState extends State<UpdateDailySell> {
       firstDate: DateTime(DateTime.now().month + 1),
     ).then((value) => setState(() {
           if (value != null) {
-            updateDateTime = value.toString();
+            itemDate = value.toString();
           } else {
-            updateDateTime = DateTime.now().toString();
+            itemDate = DateTime.now().toString();
           }
         }));
   }
+
+  final formKey = GlobalKey<FormState>();
+  String itemName = '';
+  String itemQuantity = '';
+  double itemPrice = 0;
+  String itemDate = DateTime.now().toString();
 
   @override
   Widget build(BuildContext context) {
@@ -54,8 +41,9 @@ class _UpdateDailySellState extends State<UpdateDailySell> {
         elevation: 0,
         backgroundColor: Colors.white,
         toolbarHeight: 80,
+        centerTitle: true,
         title: const Text(
-          'Update Daily Sell',
+          'Daily Sell',
           style: TextStyle(
             fontSize: 22,
             color: Colors.black,
@@ -84,7 +72,6 @@ class _UpdateDailySellState extends State<UpdateDailySell> {
                     height: 10,
                   ),
                   TextFormField(
-                    initialValue: widget.existedItemName,
                     validator: (value) {
                       if (value.isEmpty) {
                         return 'Item Name can\'t be empty';
@@ -93,7 +80,7 @@ class _UpdateDailySellState extends State<UpdateDailySell> {
                       }
                     },
                     onSaved: (value) {
-                      updateItemName = value;
+                      itemName = value;
                     },
                     decoration: InputDecoration(
                       hintText: 'Enter the Item Name',
@@ -128,7 +115,6 @@ class _UpdateDailySellState extends State<UpdateDailySell> {
                     height: 10,
                   ),
                   TextFormField(
-                    initialValue: widget.existedItemQuantity,
                     validator: (value) {
                       if (value.isEmpty) {
                         return 'Item Quantity can\'t be empty';
@@ -137,10 +123,10 @@ class _UpdateDailySellState extends State<UpdateDailySell> {
                       }
                     },
                     onSaved: (value) {
-                      updateItemQuantity = value;
+                      itemQuantity = value;
                     },
                     decoration: InputDecoration(
-                      hintText: 'Enter the Item Quantity',
+                      hintText: 'Enter Item Quantity',
                       filled: true,
                       fillColor: Colors.grey[200],
                       enabledBorder: OutlineInputBorder(
@@ -172,7 +158,6 @@ class _UpdateDailySellState extends State<UpdateDailySell> {
                     height: 10,
                   ),
                   TextFormField(
-                    initialValue: widget.existedItemPrice,
                     validator: (value) {
                       if (value.isEmpty) {
                         return 'Item Price can\'t be empty';
@@ -181,10 +166,10 @@ class _UpdateDailySellState extends State<UpdateDailySell> {
                       }
                     },
                     onSaved: (value) {
-                      updateItemPrice = double.parse(value);
+                      itemPrice = double.parse(value);
                     },
                     decoration: InputDecoration(
-                      hintText: 'Enter the Item Price',
+                      hintText: 'Enter Item Price',
                       filled: true,
                       fillColor: Colors.grey[200],
                       enabledBorder: OutlineInputBorder(
@@ -214,30 +199,32 @@ class _UpdateDailySellState extends State<UpdateDailySell> {
                     icon: const Icon(Icons.calendar_today),
                   ),
                   Text(
-                    DateFormat.yMEd().format(DateTime.parse(updateDateTime)),
+                    DateFormat.yMEd().format(DateTime.parse(itemDate)),
                   ),
                 ],
               ),
+            ),
+            const SizedBox(
+              height: 30,
             ),
             GestureDetector(
               onTap: () {
                 if (formKey.currentState.validate()) {
                   formKey.currentState.save();
+
                   double total =
                       Provider.of<DailySellData>(context, listen: false)
-                          .updateTotalPrice(
-                              double.parse(widget.existedItemPrice),
-                              updateItemPrice);
-                  var updateModel = ShopModel(
-                    id: widget.index,
-                    itemDate: updateDateTime,
-                    itemName: updateItemName,
-                    itemPrice: updateItemPrice.toStringAsFixed(2),
-                    itemQuantity: updateItemQuantity,
+                          .addTotalPrice(itemPrice);
+
+                  var model = ShopModel(
+                    itemDate: itemDate,
+                    itemName: itemName,
+                    itemPrice: itemPrice.toStringAsFixed(2),
+                    itemQuantity: itemQuantity,
                     total: total.toStringAsFixed(2),
                   );
                   Provider.of<DailySellData>(context, listen: false)
-                      .updateShopListDailySellList(updateModel);
+                      .addDailySellList(model);
                   Navigator.of(context).pop();
                 }
               },
@@ -251,7 +238,7 @@ class _UpdateDailySellState extends State<UpdateDailySell> {
                 ),
                 child: const Center(
                   child: Text(
-                    'Update Sold Item',
+                    'Sold',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18,

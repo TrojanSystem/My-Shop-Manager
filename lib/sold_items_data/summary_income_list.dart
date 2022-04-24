@@ -1,5 +1,5 @@
-import 'package:example/input_form/update_daily_sell.dart';
-import 'package:example/model/daily_sell_data.dart';
+import 'package:example/sold_items_data/daily_sell_data.dart';
+import 'package:example/sold_items_data/update_daily_sell.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:intl/intl.dart';
@@ -54,14 +54,15 @@ class SummaryIncomeList extends StatelessWidget {
                 verticalOffset: -850,
                 child: GestureDetector(
                   onTap: () {
-                    showModalBottomSheet(
-                      context: context,
-                      builder: (ctx) => UpdateDailySell(
-                        index: monthExpense[index].id,
-                        existedItemName: monthExpense[index].itemName,
-                        existedItemDate: monthExpense[index].itemDate,
-                        existedItemPrice: monthExpense[index].itemPrice,
-                        existedItemQuantity: monthExpense[index].itemQuantity,
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => UpdateDailySell(
+                          index: monthExpense[index].id,
+                          existedItemName: monthExpense[index].itemName,
+                          existedItemDate: monthExpense[index].itemDate,
+                          existedItemPrice: monthExpense[index].itemPrice,
+                          existedItemQuantity: monthExpense[index].itemQuantity,
+                        ),
                       ),
                     );
                   },

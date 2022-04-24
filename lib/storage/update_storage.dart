@@ -1,4 +1,4 @@
-import 'package:example/model/shop_model_data.dart';
+import 'package:example/storage/shop_model_data.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';

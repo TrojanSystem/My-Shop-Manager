@@ -58,7 +58,17 @@ const kkSummaryStyle = TextStyle(
   fontSize: 40,
 );
 const kkSummaryIncomeStyle = TextStyle(
+  color: Colors.green,
+  fontWeight: FontWeight.w900,
+  fontSize: 20,
+);
+const kkSummaryStyleTab = TextStyle(
   color: Colors.black,
+  fontWeight: FontWeight.w900,
+  fontSize: 20,
+);
+const kkSummaryExpenseStyle = TextStyle(
+  color: Colors.red,
   fontWeight: FontWeight.w900,
   fontSize: 20,
 );

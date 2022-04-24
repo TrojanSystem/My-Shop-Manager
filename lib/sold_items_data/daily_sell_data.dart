@@ -1,45 +1,43 @@
+import 'package:example/backend/daily_sell_database.dart';
 import 'package:example/model/shop_model.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
-import '../backend/shop_model_database.dart';
-
-class ShopModelData extends ChangeNotifier {
-  DatabaseShopStore db = DatabaseShopStore();
+class DailySellData extends ChangeNotifier {
+  DatabaseDailySell db = DatabaseDailySell();
   double totalPrice = 0;
   double totalIncomePrice = 0;
+  bool _isLoading = true;
   double soldQuantity = 0;
   double currentQuantity = 0;
-  bool _isLoading = true;
+  List<ShopModel> _dailySellList = [];
 
-  List<ShopModel> _shopList = [];
-
-  List<ShopModel> get shopList => _shopList;
+  List<ShopModel> get dailySellList => _dailySellList;
 
   bool get isLoading => _isLoading;
 
-  Future loadShopList() async {
+  Future loadDailySellList() async {
     _isLoading = true;
     notifyListeners();
-    _shopList = await db.getTasks();
+    _dailySellList = await db.getTasks();
     _isLoading = false;
     notifyListeners();
   }
 
-  Future addShopList(ShopModel task) async {
+  Future addDailySellList(ShopModel task) async {
     await db.insertTask(task);
-    await loadShopList();
+    await loadDailySellList();
     notifyListeners();
   }
 
-  Future updateShopList(ShopModel task) async {
+  Future updateShopListDailySellList(ShopModel task) async {
     await db.updateTaskList(task);
-    await loadShopList();
+    await loadDailySellList();
     notifyListeners();
   }
 
-  Future deleteShopList(int task) async {
+  Future deleteDailySellList(int task) async {
     await db.deleteTask(task);
-    await loadShopList();
+    await loadDailySellList();
     notifyListeners();
   }
 

@@ -1,43 +1,45 @@
-import 'package:example/backend/daily_sell_database.dart';
 import 'package:example/model/shop_model.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
-class DailySellData extends ChangeNotifier {
-  DatabaseDailySell db = DatabaseDailySell();
+import '../backend/shop_model_database.dart';
+
+class ShopModelData extends ChangeNotifier {
+  DatabaseShopStore db = DatabaseShopStore();
   double totalPrice = 0;
   double totalIncomePrice = 0;
-  bool _isLoading = true;
-  double soldQuantity = 0;
+  double totalQuantity = 0;
   double currentQuantity = 0;
-  List<ShopModel> _dailySellList = [];
+  bool _isLoading = true;
 
-  List<ShopModel> get dailySellList => _dailySellList;
+  List<ShopModel> _shopList = [];
+
+  List<ShopModel> get shopList => _shopList;
 
   bool get isLoading => _isLoading;
 
-  Future loadDailySellList() async {
+  Future loadShopList() async {
     _isLoading = true;
     notifyListeners();
-    _dailySellList = await db.getTasks();
+    _shopList = await db.getTasks();
     _isLoading = false;
     notifyListeners();
   }
 
-  Future addDailySellList(ShopModel task) async {
+  Future addShopList(ShopModel task) async {
     await db.insertTask(task);
-    await loadDailySellList();
+    await loadShopList();
     notifyListeners();
   }
 
-  Future updateShopListDailySellList(ShopModel task) async {
+  Future updateShopList(ShopModel task) async {
     await db.updateTaskList(task);
-    await loadDailySellList();
+    await loadShopList();
     notifyListeners();
   }
 
-  Future deleteDailySellList(int task) async {
+  Future deleteShopList(int task) async {
     await db.deleteTask(task);
-    await loadDailySellList();
+    await loadShopList();
     notifyListeners();
   }
 
@@ -55,11 +57,6 @@ class DailySellData extends ChangeNotifier {
     totalPrice -= price;
     totalPrice += updatePrice;
     return totalPrice;
-  }
-
-  double quantityManipulation(quantity, existedQuantity) {
-    currentQuantity = existedQuantity - quantity;
-    return currentQuantity;
   }
 
   List daysOfMonth = [

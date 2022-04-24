@@ -1,17 +1,15 @@
-import 'package:example/model/daily_sell_data.dart';
-import 'package:example/model/shop_model.dart';
+import 'package:example/expense_data/expenses_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import '../input_form/update_daily_sell.dart';
+import '../model/shop_model.dart';
+import 'update_expense.dart';
 
-class DailySellItem extends StatelessWidget {
-  final List soldItem;
-  final int selectedDay;
-
-  const DailySellItem({this.selectedDay, this.soldItem});
+class ExpenseItem extends StatelessWidget {
+  final List dailyExpense;
+  ExpenseItem({this.dailyExpense});
 
   // final int index;
 
@@ -20,10 +18,10 @@ class DailySellItem extends StatelessWidget {
     double _w = MediaQuery.of(context).size.width;
     return AnimationLimiter(
       child: ListView.builder(
-        padding: EdgeInsets.all(_w / 30),
+        padding: EdgeInsets.all(_w / 22),
         physics: const BouncingScrollPhysics(
             parent: AlwaysScrollableScrollPhysics()),
-        itemCount: soldItem.length,
+        itemCount: dailyExpense.length,
         itemBuilder: (BuildContext context, int index) {
           return AnimationConfiguration.staggeredList(
             position: index,
@@ -39,7 +37,6 @@ class DailySellItem extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Padding(
                           padding: const EdgeInsets.fromLTRB(8.0, 8.0, 15, 0),
@@ -55,7 +52,7 @@ class DailySellItem extends StatelessWidget {
                               ),
                               Text(
                                 DateFormat.yMMMEd().format(
-                                  DateTime.parse(soldItem[index].itemDate),
+                                  DateTime.now(),
                                 ),
                                 style: const TextStyle(
                                   color: Colors.black,
@@ -67,7 +64,7 @@ class DailySellItem extends StatelessWidget {
                           ),
                         ),
                         Container(
-                          margin: const EdgeInsets.only(left: 20, top: 15),
+                          margin: const EdgeInsets.only(left: 20, top: 10),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -78,15 +75,18 @@ class DailySellItem extends StatelessWidget {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Text(
-                                    soldItem[index].itemName,
+                                    dailyExpense[index].itemName,
                                     style: const TextStyle(
                                       color: Colors.black,
                                       fontSize: 15,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
                                   Text(
-                                    'x ${soldItem[index].itemQuantity}',
+                                    '${dailyExpense[index].itemQuantity}',
                                     style: const TextStyle(
                                       color: Colors.black,
                                       fontSize: 15,
@@ -101,16 +101,17 @@ class DailySellItem extends StatelessWidget {
                                     onPressed: () {
                                       Navigator.of(context).push(
                                         MaterialPageRoute(
-                                          builder: (_) => UpdateDailySell(
-                                            index: soldItem[index].id,
+                                          builder: (_) => UpdateExpense(
+                                            index: dailyExpense[index].id,
                                             existedItemName:
-                                                soldItem[index].itemName,
+                                                dailyExpense[index].itemName,
                                             existedItemDate:
-                                                soldItem[index].itemDate,
+                                                dailyExpense[index].itemDate,
                                             existedItemPrice:
-                                                soldItem[index].itemPrice,
+                                                dailyExpense[index].itemPrice,
                                             existedItemQuantity:
-                                                soldItem[index].itemQuantity,
+                                                dailyExpense[index]
+                                                    .itemQuantity,
                                           ),
                                         ),
                                       );
@@ -123,28 +124,28 @@ class DailySellItem extends StatelessWidget {
                                   ),
                                   IconButton(
                                     onPressed: () async {
-                                      Provider.of<DailySellData>(context,
+                                      Provider.of<ExpensesData>(context,
                                               listen: false)
-                                          .deleteDailySellList(
-                                              soldItem[index].id);
-                                      double totalMinus =
-                                          Provider.of<DailySellData>(context,
-                                                  listen: false)
-                                              .minusTotalPrice(double.parse(
-                                                  soldItem[index].itemPrice));
+                                          .deleteExpenseList(
+                                              dailyExpense[index].id);
+                                      double totalMinus = Provider.of<
+                                                  ExpensesData>(context,
+                                              listen: false)
+                                          .minusTotalPrice(double.parse(
+                                              dailyExpense[index].itemPrice));
                                       final updateExpense = ShopModel(
-                                        id: soldItem[index].id,
-                                        itemName: soldItem[index].itemName,
-                                        itemDate: soldItem[index].itemDate,
-                                        itemPrice: soldItem[index].itemPrice,
+                                        id: dailyExpense[index].id,
+                                        itemName: dailyExpense[index].itemName,
+                                        itemDate: dailyExpense[index].itemDate,
+                                        itemPrice:
+                                            dailyExpense[index].itemPrice,
                                         itemQuantity:
-                                            soldItem[index].itemQuantity,
+                                            dailyExpense[index].itemQuantity,
                                         total: totalMinus.toString(),
                                       );
-                                      Provider.of<DailySellData>(context,
+                                      Provider.of<ExpensesData>(context,
                                               listen: false)
-                                          .updateShopListDailySellList(
-                                              updateExpense);
+                                          .updateExpenseList(updateExpense);
                                     },
                                     icon: const Icon(
                                       Icons.delete_forever,
@@ -164,7 +165,7 @@ class DailySellItem extends StatelessWidget {
                       left: 20,
                       child: Container(
                         decoration: BoxDecoration(
-                          color: Colors.green,
+                          color: Colors.red,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         width: 120,
@@ -173,7 +174,7 @@ class DailySellItem extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             const Icon(
-                              Icons.arrow_downward_rounded,
+                              Icons.arrow_upward_rounded,
                               size: 20,
                               color: Colors.white,
                             ),
@@ -186,7 +187,7 @@ class DailySellItem extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              soldItem[index].itemPrice,
+                              dailyExpense[index].itemPrice,
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 15,

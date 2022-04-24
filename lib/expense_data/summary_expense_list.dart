@@ -1,5 +1,5 @@
-import 'package:example/input_form/update_expense.dart';
-import 'package:example/model/expenses_data.dart';
+import 'package:example/expense_data/expenses_data.dart';
+import 'package:example/expense_data/update_expense.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:intl/intl.dart';
@@ -61,14 +61,15 @@ class SummaryExpenseList extends StatelessWidget {
                 verticalOffset: -850,
                 child: GestureDetector(
                   onTap: () {
-                    showModalBottomSheet(
-                      context: context,
-                      builder: (ctx) => UpdateExpense(
-                        index: monthExpense[index].id,
-                        existedItemName: monthExpense[index].itemName,
-                        existedItemDate: monthExpense[index].itemDate,
-                        existedItemPrice: monthExpense[index].itemPrice,
-                        existedItemQuantity: monthExpense[index].itemQuantity,
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => UpdateExpense(
+                          index: monthExpense[index].id,
+                          existedItemName: monthExpense[index].itemName,
+                          existedItemDate: monthExpense[index].itemDate,
+                          existedItemPrice: monthExpense[index].itemPrice,
+                          existedItemQuantity: monthExpense[index].itemQuantity,
+                        ),
                       ),
                     );
                   },

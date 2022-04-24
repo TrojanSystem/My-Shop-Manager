@@ -1,6 +1,6 @@
-import 'package:example/model/daily_sell_data.dart';
-import 'package:example/model/expenses_data.dart';
+import 'package:example/expense_data/expenses_data.dart';
 import 'package:example/profit_analysis/profit_analaysis.dart';
+import 'package:example/sold_items_data/daily_sell_data.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -126,7 +126,7 @@ class _ProfitAnalaysisScreenState extends State<ProfitAnalaysisScreen> {
                       children: [
                         const Text(
                           'Income',
-                          style: kkSummaryIncomeStyle,
+                          style: kkSummaryStyleTab,
                         ),
                         Text(
                           totIncomeSum.toStringAsFixed(2),
@@ -143,11 +143,11 @@ class _ProfitAnalaysisScreenState extends State<ProfitAnalaysisScreen> {
                       children: [
                         const Text(
                           'Expense',
-                          style: kkSummaryIncomeStyle,
+                          style: kkSummaryStyleTab,
                         ),
                         Text(
                           totExpenseSum.toStringAsFixed(2),
-                          style: kkSummaryIncomeStyle,
+                          style: kkSummaryExpenseStyle,
                         ),
                       ],
                     ),
@@ -169,7 +169,7 @@ class _ProfitAnalaysisScreenState extends State<ProfitAnalaysisScreen> {
                       children: [
                         const Text(
                           'Profit',
-                          style: kkSummaryIncomeStyle,
+                          style: kkSummaryStyleTab,
                         ),
                         Text(
                           totalSummary(totExpenseSum, totIncomeSum)

@@ -1,17 +1,30 @@
+import 'package:example/expense_data/expenses_data.dart';
 import 'package:example/model/shop_model.dart';
-import 'package:example/model/shop_model_data.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class AddStorageList extends StatefulWidget {
-  const AddStorageList({Key key}) : super(key: key);
+class UpdateExpense extends StatefulWidget {
+  final int index;
+  final String existedItemPrice;
+  final String existedItemName;
+  final String existedItemDate;
+  final String existedItemQuantity;
+
+  const UpdateExpense(
+      {Key key,
+      this.index,
+      this.existedItemPrice,
+      this.existedItemName,
+      this.existedItemDate,
+      this.existedItemQuantity})
+      : super(key: key);
 
   @override
-  State<AddStorageList> createState() => _AddStorageListState();
+  State<UpdateExpense> createState() => _UpdateExpenseState();
 }
 
-class _AddStorageListState extends State<AddStorageList> {
+class _UpdateExpenseState extends State<UpdateExpense> {
   void datePicker() {
     showDatePicker(
       context: context,
@@ -20,18 +33,18 @@ class _AddStorageListState extends State<AddStorageList> {
       firstDate: DateTime(DateTime.now().month + 1),
     ).then((value) => setState(() {
           if (value != null) {
-            itemDate = value.toString();
+            updateDateTime = value.toString();
           } else {
-            itemDate = DateTime.now().toString();
+            updateDateTime = DateTime.now().toString();
           }
         }));
   }
 
   final formKey = GlobalKey<FormState>();
-  String itemName = '';
-  String itemQuantity = '';
-  double itemPrice = 0;
-  String itemDate = DateTime.now().toString();
+  String updateItemName = '';
+  String updateItemQuantity = '';
+  double updateItemPrice = 0;
+  String updateDateTime = DateTime.now().toString();
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +56,7 @@ class _AddStorageListState extends State<AddStorageList> {
         toolbarHeight: 80,
         centerTitle: true,
         title: const Text(
-          'Storage',
+          'Expenses',
           style: TextStyle(
             fontSize: 22,
             color: Colors.black,
@@ -62,7 +75,7 @@ class _AddStorageListState extends State<AddStorageList> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Item Name',
+                    'Name',
                     style: TextStyle(
                       fontWeight: FontWeight.w900,
                       fontSize: 18,
@@ -72,18 +85,19 @@ class _AddStorageListState extends State<AddStorageList> {
                     height: 10,
                   ),
                   TextFormField(
+                    initialValue: widget.existedItemName,
                     validator: (value) {
                       if (value.isEmpty) {
-                        return 'Item Name can\'t be empty';
+                        return 'Name can\'t be empty';
                       } else {
                         return null;
                       }
                     },
                     onSaved: (value) {
-                      itemName = value;
+                      updateItemName = value;
                     },
                     decoration: InputDecoration(
-                      hintText: 'Enter the Item Name',
+                      hintText: 'Enter Name',
                       filled: true,
                       fillColor: Colors.grey[200],
                       enabledBorder: OutlineInputBorder(
@@ -105,7 +119,7 @@ class _AddStorageListState extends State<AddStorageList> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Item Quantity',
+                    'Description',
                     style: TextStyle(
                       fontWeight: FontWeight.w900,
                       fontSize: 18,
@@ -115,18 +129,20 @@ class _AddStorageListState extends State<AddStorageList> {
                     height: 10,
                   ),
                   TextFormField(
+                    initialValue: widget.existedItemQuantity,
+                    maxLines: 3,
                     validator: (value) {
                       if (value.isEmpty) {
-                        return 'Item Quantity can\'t be empty';
+                        return 'Description can\'t be empty';
                       } else {
                         return null;
                       }
                     },
                     onSaved: (value) {
-                      itemQuantity = value;
+                      updateItemQuantity = value;
                     },
                     decoration: InputDecoration(
-                      hintText: 'Enter Item Quantity',
+                      hintText: 'Enter Description',
                       filled: true,
                       fillColor: Colors.grey[200],
                       enabledBorder: OutlineInputBorder(
@@ -148,7 +164,7 @@ class _AddStorageListState extends State<AddStorageList> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Item Price',
+                    'Price',
                     style: TextStyle(
                       fontWeight: FontWeight.w900,
                       fontSize: 18,
@@ -158,18 +174,19 @@ class _AddStorageListState extends State<AddStorageList> {
                     height: 10,
                   ),
                   TextFormField(
+                    initialValue: widget.existedItemPrice,
                     validator: (value) {
                       if (value.isEmpty) {
-                        return 'Item Price can\'t be empty';
+                        return 'Price can\'t be empty';
                       } else {
                         return null;
                       }
                     },
                     onSaved: (value) {
-                      itemPrice = double.parse(value);
+                      updateItemPrice = double.parse(value);
                     },
                     decoration: InputDecoration(
-                      hintText: 'Enter Item Price',
+                      hintText: 'Enter Price',
                       filled: true,
                       fillColor: Colors.grey[200],
                       enabledBorder: OutlineInputBorder(
@@ -199,7 +216,7 @@ class _AddStorageListState extends State<AddStorageList> {
                     icon: const Icon(Icons.calendar_today),
                   ),
                   Text(
-                    DateFormat.yMEd().format(DateTime.parse(itemDate)),
+                    DateFormat.yMEd().format(DateTime.parse(updateDateTime)),
                   ),
                 ],
               ),
@@ -211,13 +228,21 @@ class _AddStorageListState extends State<AddStorageList> {
               onTap: () {
                 if (formKey.currentState.validate()) {
                   formKey.currentState.save();
-                  var model = ShopModel(
-                      itemDate: itemDate,
-                      itemName: itemName,
-                      itemPrice: itemPrice.toStringAsFixed(2),
-                      itemQuantity: itemQuantity);
-                  Provider.of<ShopModelData>(context, listen: false)
-                      .addShopList(model);
+                  double total =
+                      Provider.of<ExpensesData>(context, listen: false)
+                          .updateTotalPrice(
+                              double.parse(widget.existedItemPrice),
+                              updateItemPrice);
+                  var updateModel = ShopModel(
+                    id: widget.index,
+                    itemDate: updateDateTime,
+                    itemName: updateItemName,
+                    itemPrice: updateItemPrice.toStringAsFixed(2),
+                    itemQuantity: updateItemQuantity,
+                    total: total.toStringAsFixed(2),
+                  );
+                  Provider.of<ExpensesData>(context, listen: false)
+                      .updateExpenseList(updateModel);
                   Navigator.of(context).pop();
                 }
               },
@@ -226,12 +251,12 @@ class _AddStorageListState extends State<AddStorageList> {
                 width: double.infinity,
                 height: 60.0,
                 decoration: BoxDecoration(
-                  color: Colors.green[500],
+                  color: Colors.red[500],
                   borderRadius: BorderRadius.circular(15.0),
                 ),
                 child: const Center(
                   child: Text(
-                    'Add to Store',
+                    'Update Expense',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18,

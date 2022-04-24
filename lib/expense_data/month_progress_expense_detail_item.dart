@@ -1,4 +1,4 @@
-import 'package:example/model/expenses_data.dart';
+import 'package:example/expense_data/expenses_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animation_progress_bar/flutter_animation_progress_bar.dart';
 import 'package:provider/provider.dart';
@@ -17,13 +17,12 @@ class MonthProgressDetailItem extends StatelessWidget {
     var x = todayFilteredList
         .where((e) => e.itemName.toString() == filteredName[index])
         .toList();
-    var totalQuantity = todayFilteredList.map((e) => e.itemQuantity).toList();
+
     var totalSells = todayFilteredList.map((e) => e.itemPrice).toList();
 
     double totSum = 0.0;
     for (int xx = 0; xx < totalSells.length; xx++) {
-      totSum +=
-          (double.parse(totalSells[xx] * double.parse(totalQuantity[xx])));
+      totSum += (double.parse(totalSells[xx]));
     }
     var z = x.map((e) => e.itemName).toList();
     var zz = x.map((e) => e.itemPrice).toList();
@@ -70,7 +69,7 @@ class MonthProgressDetailItem extends StatelessWidget {
                                 : xxx.floor() < 100
                                     ? Colors.redAccent
                                     : Colors.red[800],
-                        currentValue: totSum == 0 ? 0 : xxx,
+                        currentValue: totSum == 0 ? 0 : double.parse(xxx.toStringAsFixed(2)),
                         displayText: '%',
                         displayTextStyle: const TextStyle(
                           fontWeight: FontWeight.bold,
