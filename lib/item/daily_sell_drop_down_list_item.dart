@@ -4,11 +4,14 @@ class DailySellDropDownListItem extends StatefulWidget {
   final String title;
   final String listItem1;
   final String listItem2;
-
-  const DailySellDropDownListItem(
-      {Key key, this.title, this.listItem1, this.listItem2})
-      : super(key: key);
-
+  final Function buttonPressed;
+  final Function buttonPressedDetail;
+  DailySellDropDownListItem(
+      {this.buttonPressed,
+      this.title,
+      this.listItem1,
+      this.listItem2,
+      this.buttonPressedDetail});
   @override
   State<DailySellDropDownListItem> createState() =>
       _DailySellDropDownListItemState();
@@ -169,7 +172,7 @@ class _DailySellDropDownListItemState extends State<DailySellDropDownListItem> {
                                 child: Padding(
                                   padding: const EdgeInsets.only(left: 10.0),
                                   child: TextButton(
-                                    onPressed: () {},
+                                    onPressed: widget.buttonPressed,
                                     child: Text(
                                       widget.listItem1,
                                       style: const TextStyle(
@@ -185,7 +188,7 @@ class _DailySellDropDownListItemState extends State<DailySellDropDownListItem> {
                                 child: Padding(
                                   padding: const EdgeInsets.only(left: 15.0),
                                   child: TextButton(
-                                    onPressed: () {},
+                                    onPressed: widget.buttonPressedDetail,
                                     child: Text(
                                       widget.listItem2,
                                       style: const TextStyle(

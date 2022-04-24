@@ -66,7 +66,7 @@ class StorageScreen extends StatelessWidget {
                     ),
                   )
                 : StorageListItem(storageList: result),
-        drawer: const DrawerItem(),
+        drawer: DrawerItem(),
       ),
     );
   }

@@ -1,19 +1,64 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../model/daily_sell_data.dart';
+import '../model/expenses_data.dart';
+import '../month_progress/month_progress_expense_item.dart';
+import '../month_progress/month_progress_sold_item.dart';
 import '../profit_analysis/profit_analysis_screen.dart';
 import 'daily_sell_drop_down_list_item.dart';
 
 class DrawerItem extends StatelessWidget {
-  const DrawerItem({Key key}) : super(key: key);
-
+  DrawerItem({Key key}) : super(key: key);
+  int currentYear = DateTime.now().year;
+  double totalSumation = 0.00;
+  bool isNegative = false;
   @override
   Widget build(BuildContext context) {
+    final summaryDataExpense = Provider.of<ExpensesData>(context).expenseList;
+    final summaryDataSold = Provider.of<DailySellData>(context).dailySellList;
+
+    final filtereByYearExpense = summaryDataExpense
+        .where(
+            (element) => DateTime.parse(element.itemDate).year == currentYear)
+        .toList();
+    final filtereByYearSold = summaryDataSold
+        .where(
+            (element) => DateTime.parse(element.itemDate).year == currentYear)
+        .toList();
+
+    var incomeFiltereByMonth = filtereByYearSold
+        .map((e) => DateTime.parse(e.itemDate).month)
+        .toSet()
+        .toList();
+
+    var totalIncome = filtereByYearSold.map((e) => e.itemPrice).toList();
+    var totIncomeSum = 0.0;
+    for (int xx = 0; xx < totalIncome.length; xx++) {
+      totIncomeSum += double.parse(totalIncome[xx]);
+    }
+
+    var totalExpenses = filtereByYearExpense.map((e) => e.itemPrice).toList();
+    var totExpenseSum = 0.0;
+    for (int xx = 0; xx < totalExpenses.length; xx++) {
+      totExpenseSum += double.parse(totalExpenses[xx]);
+    }
     return Drawer(
       child: Column(
         children: [
           Expanded(
             child: Container(
               color: Colors.white,
+              child: const Center(
+                child: Text(
+                  'Shop Manager',
+                  style: TextStyle(
+                    fontSize: 35,
+                    fontWeight: FontWeight.w900,
+                    color: Color.fromRGBO(3, 83, 151, 1),
+                  ),
+                ),
+              ),
             ),
           ),
           Expanded(
@@ -23,15 +68,31 @@ class DrawerItem extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const DailySellDropDownListItem(
+                  DailySellDropDownListItem(
                     title: 'Daily Sell',
                     listItem1: 'Item Progress',
                     listItem2: 'Sold Items',
+                    buttonPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => MonthProgressSoldItem(),
+                        ),
+                      );
+                    },
+                    buttonPressedDetail: () {},
                   ),
-                  const DailySellDropDownListItem(
+                  DailySellDropDownListItem(
                     title: 'Expense Tracker',
                     listItem1: 'Monthly Progress',
                     listItem2: 'Expense Detail',
+                    buttonPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => MonthProgressItem(),
+                        ),
+                      );
+                    },
+                    buttonPressedDetail: () {},
                   ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(22.0, 28, 8, 0),

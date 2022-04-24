@@ -1,11 +1,14 @@
-import 'package:example/input_form/add_daily_sell.dart';
+import 'package:example/item/drop_down_menu_button.dart';
 import 'package:example/model/daily_sell_data.dart';
+import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../constants.dart';
-import '../item/add_button_item.dart';
+import '../input_form/add_daily_sell.dart';
 import '../item/daily_sell_item.dart';
+import '../month_progress/month_progress_sold_item.dart';
+import '../profit_analysis/profit_analysis_screen.dart';
 
 class DailySellScreen extends StatefulWidget {
   DailySellScreen({Key key}) : super(key: key);
@@ -16,9 +19,11 @@ class DailySellScreen extends StatefulWidget {
 
 class _DailySellScreenState extends State<DailySellScreen> {
   int selectedDayOfMonth = DateTime.now().day;
+  final GlobalKey<FabCircularMenuState> fabKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
+    final primaryColor = Theme.of(context).primaryColor;
     final yearFilter = Provider.of<DailySellData>(context).dailySellList;
     final result = yearFilter
         .where((element) =>
@@ -59,14 +64,6 @@ class _DailySellScreenState extends State<DailySellScreen> {
       builder: (context, dailySell, child) => Scaffold(
         backgroundColor: const Color.fromRGBO(3, 83, 151, 1),
         appBar: AppBar(
-          leading: IconButton(
-            onPressed: () {
-              // setState(() {
-              //   Provider.of<FileHandler>(context, listen: false).createTable();
-              // });
-            },
-            icon: const Icon(Icons.save),
-          ),
           backgroundColor: const Color.fromRGBO(3, 83, 151, 1),
           title: const Text(
             'Daily Sell',
@@ -74,24 +71,6 @@ class _DailySellScreenState extends State<DailySellScreen> {
           ),
           elevation: 0,
           toolbarHeight: 90,
-          flexibleSpace: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 38.0, right: 30),
-                child: AddButton(
-                  navigateToPage: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const AddStorageItem(),
-                      ),
-                    );
-                  },
-                  colour: Colors.green,
-                ),
-              ),
-            ],
-          ),
         ),
         body: Column(
           children: [
@@ -174,6 +153,32 @@ class _DailySellScreenState extends State<DailySellScreen> {
                           selectedDay: selectedDayOfMonth),
             ),
           ],
+        ),
+        floatingActionButton: Builder(
+          builder: (context) => DropDownMenuButton(
+            button_1: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const AddStorageItem(),
+                ),
+              );
+            },
+            button_2: () {},
+            button_3: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => MonthProgressSoldItem(),
+                ),
+              );
+            },
+            button_4: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const ProfitAnalaysisScreen(),
+                ),
+              );
+            },
+          ),
         ),
       ),
     );
