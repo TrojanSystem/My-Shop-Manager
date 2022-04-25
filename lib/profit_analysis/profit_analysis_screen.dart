@@ -1,10 +1,12 @@
 import 'package:example/expense_data/expenses_data.dart';
 import 'package:example/profit_analysis/profit_analaysis.dart';
 import 'package:example/sold_items_data/daily_sell_data.dart';
+import 'package:example/storage/profit_calculator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../constants.dart';
+import '../storage/shop_model_data.dart';
 
 class ProfitAnalaysisScreen extends StatefulWidget {
   const ProfitAnalaysisScreen({Key key}) : super(key: key);
@@ -20,36 +22,49 @@ class _ProfitAnalaysisScreenState extends State<ProfitAnalaysisScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Provider.of<ShopModelData>(context).currentYear = currentYear;
     final summaryDataExpense = Provider.of<ExpensesData>(context).expenseList;
     final summaryDataSold = Provider.of<DailySellData>(context).dailySellList;
+    final yearFilter = Provider.of<ShopModelData>(context).shopList;
+    final result = yearFilter
+        .where((element) =>
+            DateTime.parse(element.itemDate).year == DateTime.now().year)
+        .toList();
+    var filterStorageName = result.map((e) => e.itemName).toSet().toList();
 
-    final filtereByYearExpense = summaryDataExpense
+    final filterByYearExpense = summaryDataExpense
         .where(
             (element) => DateTime.parse(element.itemDate).year == currentYear)
         .toList();
-    final filtereByYearSold = summaryDataSold
+    final filterByYearSold = summaryDataSold
         .where(
             (element) => DateTime.parse(element.itemDate).year == currentYear)
         .toList();
 
-    var incomeFiltereByMonth = filtereByYearSold
-        .map((e) => DateTime.parse(e.itemDate).month)
-        .toSet()
-        .toList();
-
-    var totalIncome = filtereByYearSold.map((e) => e.itemPrice).toList();
+    var totalIncomeQuantity =
+        filterByYearSold.map((e) => e.itemQuantity).toList();
+    var totalIncome = filterByYearSold.map((e) => e.itemPrice).toList();
     var totIncomeSum = 0.0;
     for (int xx = 0; xx < totalIncome.length; xx++) {
-      totIncomeSum += double.parse(totalIncome[xx]);
+      totIncomeSum += (double.parse(totalIncome[xx]) *
+          double.parse(totalIncomeQuantity[xx]));
     }
 
-    var totalExpenses = filtereByYearExpense.map((e) => e.itemPrice).toList();
+    var totalExpenses = filterByYearExpense.map((e) => e.itemPrice).toList();
     var totExpenseSum = 0.0;
     for (int xx = 0; xx < totalExpenses.length; xx++) {
       totExpenseSum += double.parse(totalExpenses[xx]);
     }
+    final x = Provider.of<ExampleClass>(context).fileList;
+    final xx = x.map((e) => e.profit).toList();
+    var sumUp = 0.0;
+    for (int finals = 0; finals < xx.length; finals++) {
+      sumUp += double.parse(xx[finals]);
+    }
+    double yearlyProfit = totIncomeSum - sumUp;
+
     double totalSummary(double totExpenseSum, double totIncomeSum) {
-      totalSumation = totIncomeSum - totExpenseSum;
+      totalSumation = yearlyProfit - totExpenseSum;
       if (totalSumation < 0) {
         totalSumation = totalSumation * (-1);
         isNegative = true;
@@ -129,7 +144,7 @@ class _ProfitAnalaysisScreenState extends State<ProfitAnalaysisScreen> {
                           style: kkSummaryStyleTab,
                         ),
                         Text(
-                          totIncomeSum.toStringAsFixed(2),
+                          yearlyProfit.toStringAsFixed(2),
                           style: kkSummaryIncomeStyle,
                         ),
                       ],
@@ -172,7 +187,7 @@ class _ProfitAnalaysisScreenState extends State<ProfitAnalaysisScreen> {
                           style: kkSummaryStyleTab,
                         ),
                         Text(
-                          totalSummary(totExpenseSum, totIncomeSum)
+                          totalSummary(totExpenseSum, yearlyProfit)
                               .toStringAsFixed(2),
                           style: TextStyle(
                             color: isNegative ? Colors.red : Colors.green,

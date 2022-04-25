@@ -22,6 +22,7 @@ class _StorageScreenState extends State<StorageScreen> {
   @override
   Widget build(BuildContext context) {
     final yearFilter = Provider.of<ShopModelData>(context).shopList;
+
     final result = yearFilter
         .where((element) =>
             DateTime.parse(element.itemDate).year == DateTime.now().year)

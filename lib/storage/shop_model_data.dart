@@ -8,8 +8,11 @@ class ShopModelData extends ChangeNotifier {
   double totalPrice = 0;
   double totalIncomePrice = 0;
   double totalQuantity = 0;
-  double currentQuantity = 0;
+  int currentYear = 0;
   bool _isLoading = true;
+  double total = 0.0;
+  double totalDailySum = 0.0;
+  double totalDaily = 0.0;
 
   List<ShopModel> _shopList = [];
 
@@ -46,6 +49,13 @@ class ShopModelData extends ChangeNotifier {
   double addTotalPrice(price) {
     totalPrice += price;
     return totalPrice;
+  }
+
+  double add(price, x) {
+    double totals = 0.0;
+    totals += (price * x);
+    total = totalDailySum - totals;
+    return total;
   }
 
   double minusTotalPrice(double price) {

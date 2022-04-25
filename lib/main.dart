@@ -1,7 +1,8 @@
 import 'package:example/expense_data/expenses_data.dart';
-import 'package:example/screen/home_page_screen.dart';
+import 'package:example/screen/splash_screen.dart';
 import 'package:example/sold_items_data/daily_sell_data.dart';
 import 'package:example/sold_items_data/sold_item_pdf_report.dart';
+import 'package:example/storage/profit_calculator.dart';
 import 'package:example/storage/shop_model_data.dart';
 import 'package:example/storage/storage_pdf_report.dart';
 import 'package:flutter/material.dart';
@@ -35,6 +36,9 @@ class MyApp extends StatelessWidget {
           create: (context) => FileHandlerForStorage(),
         ),
         ChangeNotifierProvider(
+          create: (context) => ExampleClass(),
+        ),
+        ChangeNotifierProvider(
           create: (context) => ExpensesData()..loadExpenseList(),
         ),
         ChangeNotifierProvider(
@@ -44,10 +48,10 @@ class MyApp extends StatelessWidget {
           create: (context) => FunctionalityData(),
         )
       ],
-      child: MaterialApp(
+      child: const MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'My Store Manager',
-        home: HomePage(),
+        home: MyCustomSplashScreen(),
       ),
     );
   }

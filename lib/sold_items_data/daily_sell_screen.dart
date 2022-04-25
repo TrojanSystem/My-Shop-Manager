@@ -1,6 +1,8 @@
 import 'package:example/item/drop_down_menu_button.dart';
 import 'package:example/sold_items_data/daily_sell_data.dart';
 import 'package:example/sold_items_data/sold_item_pdf_report.dart';
+import 'package:example/storage/profit_calculator.dart';
+import 'package:example/storage/shop_model_data.dart';
 import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -25,7 +27,7 @@ class _DailySellScreenState extends State<DailySellScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final primaryColor = Theme.of(context).primaryColor;
+    Provider.of<ExampleClass>(context).fileList;
     final yearFilter = Provider.of<DailySellData>(context).dailySellList;
     final result = yearFilter
         .where((element) =>
@@ -53,6 +55,7 @@ class _DailySellScreenState extends State<DailySellScreen> {
       totSum +=
           (double.parse(totalSells[xx]) * double.parse(totalQuantitySells[xx]));
     }
+
     var totalQuantityDailySells =
         dailySells.map((e) => e.itemQuantity).toList();
 
@@ -62,6 +65,7 @@ class _DailySellScreenState extends State<DailySellScreen> {
       totDailySum += (double.parse(totalDailySells[xx]) *
           double.parse(totalQuantityDailySells[xx]));
     }
+    Provider.of<ShopModelData>(context).totalDailySum = totSum;
 
     final newLabour = dailySells
         .map((e) => SoldItemPDFReport(
@@ -100,6 +104,7 @@ class _DailySellScreenState extends State<DailySellScreen> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: DropdownButton(
+                          borderRadius: BorderRadius.zero,
                           dropdownColor: Colors.grey[850],
                           iconEnabledColor: Colors.white,
                           menuMaxHeight: 300,

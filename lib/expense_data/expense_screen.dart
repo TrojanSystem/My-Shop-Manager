@@ -119,7 +119,7 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Daily Income: $totDailySum',
+                              'Daily Expense: $totDailySum',
                               style: dailyIncomeStyle,
                             ),
                             Text(

@@ -18,6 +18,13 @@ const storageItemDate = TextStyle(
   fontSize: 15,
   color: Colors.black,
 );
+const sloganStyle = TextStyle(
+  fontFamily: 'FjallaOne',
+  fontSize: 22,
+  color: Colors.white,
+  letterSpacing: 1,
+  fontWeight: FontWeight.w900,
+);
 const storageItemMoney = TextStyle(
   fontFamily: 'FjallaOne',
   fontSize: 18,

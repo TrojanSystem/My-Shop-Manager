@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../constants.dart';
+import '../storage/profit_calculator.dart';
 
 class ProfitAnalaysis extends StatefulWidget {
   final int index;
@@ -20,7 +21,7 @@ class ProfitAnalaysis extends StatefulWidget {
 
 class _ProfitAnalaysisState extends State<ProfitAnalaysis> {
   bool isTapped = true;
-  double totalSumation = 0.00;
+  double totalSumation = 0.0;
   bool isNegative = false;
   bool isExpanded = false;
 
@@ -45,16 +46,16 @@ class _ProfitAnalaysisState extends State<ProfitAnalaysis> {
       'Dec'
     ];
 
-    final filtereByYearForExpense = summaryExpenseDataList
+    final filterByYearForExpense = summaryExpenseDataList
         .where((element) =>
             DateTime.parse(element.itemDate).year == widget.currentYear)
         .toList();
-    final filtereByYearForSell = summarySellingDataList
+    final filterByYearForSell = summarySellingDataList
         .where((element) =>
             DateTime.parse(element.itemDate).year == widget.currentYear)
         .toList();
 
-    var monthExpense = filtereByYearForExpense
+    var monthExpense = filterByYearForExpense
         .where((element) =>
             DateFormat.MMM()
                 .format(DateTime.parse(element.itemDate))
@@ -67,18 +68,34 @@ class _ProfitAnalaysisState extends State<ProfitAnalaysis> {
       sumExpense += double.parse(monthExpenseSummary[x]);
     }
 
-    var monthIncome = filtereByYearForSell
+    var monthIncome = filterByYearForSell
         .where((element) =>
             DateFormat.MMM()
                 .format(DateTime.parse(element.itemDate))
                 .toString() ==
             monthOfYear[widget.index])
         .toList();
+    var monthIncomeSummaryQuantity =
+        monthIncome.map((e) => e.itemQuantity).toList();
     var monthIncomeSummary = monthIncome.map((e) => e.itemPrice).toList();
-    var sumIncome = 0.0;
+    var sumIncomes = 0.0;
     for (int x = 0; x < monthIncomeSummary.length; x++) {
-      sumIncome += double.parse(monthIncomeSummary[x]);
+      sumIncomes += (double.parse(monthIncomeSummary[x]) *
+          double.parse(monthIncomeSummaryQuantity[x]));
     }
+    final x = Provider.of<ExampleClass>(context).fileList;
+    final xx = x.map((e) => e.profit).toList();
+    var sumUp = 0.0;
+    for (int finals = 0; finals < xx.length; finals++) {
+      sumUp += double.parse(xx[finals]);
+    }
+    double sumIncome = 0.00;
+    if (monthOfYear[widget.index] == monthOfYear[DateTime.now().month - 1]) {
+      sumIncome = sumIncomes - sumUp;
+    } else {
+      sumIncome = 0;
+    }
+
     double totalSummaryDetail(double sumIncome, double sumExpense) {
       totalSumation = sumIncome - sumExpense;
       if (totalSumation < 0) {

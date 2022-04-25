@@ -9,6 +9,7 @@ class DailySellData extends ChangeNotifier {
   bool _isLoading = true;
   double soldQuantity = 0;
   double currentQuantity = 0;
+
   List<ShopModel> _dailySellList = [];
 
   List<ShopModel> get dailySellList => _dailySellList;

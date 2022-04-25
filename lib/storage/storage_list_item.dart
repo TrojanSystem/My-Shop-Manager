@@ -1,8 +1,7 @@
-import 'package:example/sold_items_data/daily_sell_data.dart';
+import 'package:example/storage/profit_calculator.dart';
 import 'package:example/storage/shop_model_data.dart';
 import 'package:example/storage/storage_pdf_report.dart';
 import 'package:example/storage/update_storage.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
@@ -18,55 +17,109 @@ class StorageListItem extends StatelessWidget {
 
   StorageListItem({this.storageList, this.soldItemList});
 
-  // final int index;
-
   @override
   Widget build(BuildContext context) {
-    final adjusted = Provider.of<DailySellData>(context).currentQuantity;
     double _w = MediaQuery.of(context).size.width;
-    var FilterName = storageList.map((e) => e.itemName).toSet().toList();
-    var FilterNameForSell =
+    var filterName = storageList.map((e) => e.itemName).toSet().toList();
+    var filterNameForSell =
         soldItemList.map((e) => e.itemName).toSet().toList();
+
     final List<StoragePDFReport> newLabour = [];
+    final List<StorageExample> newModel = [];
     return AnimationLimiter(
       child: ListView.builder(
         padding: EdgeInsets.all(_w / 30),
         physics: const BouncingScrollPhysics(
-            parent: AlwaysScrollableScrollPhysics()),
-        itemCount: FilterName.length,
+          parent: AlwaysScrollableScrollPhysics(),
+        ),
+        itemCount: filterName.length,
         itemBuilder: (BuildContext context, int index) {
           var filteredNameForSell = soldItemList
-              .where((element) => element.itemName == FilterName[index])
+              .where((element) => element.itemName == filterName[index])
+              .toSet();
+          var filteredNameForSells = storageList
+              .where((element) => element.itemName == filterName[index])
               .toSet();
           var filterPriceForSell =
-              filteredNameForSell.map((e) => e.itemPrice).toList();
+              filteredNameForSells.map((e) => e.itemPrice).toList();
+          var filterPriceForSells =
+              filteredNameForSells.map((e) => e.itemQuantity).toList();
+
           var sumPriceForSell = 0.0;
-          for (int x = 0; x < filteredNameForSell.length; x++) {
-            sumPriceForSell += double.parse(filterPriceForSell[x]);
+          for (int x = 0; x < filterPriceForSells.length; x++) {
+            sumPriceForSell += (double.parse(filterPriceForSells[x]) *
+                double.parse(filterPriceForSell[x]));
           }
+
+          //print(sum[0]);
           var filterQuantityForSell =
               filteredNameForSell.map((e) => e.itemQuantity).toList();
+          // Total quantity calculation for the sold items
           var sumQuantityForSell = 0.0;
           for (int x = 0; x < filteredNameForSell.length; x++) {
             sumQuantityForSell += double.parse(filterQuantityForSell[x]);
           }
+
           var filteredName = storageList
-              .where((element) => element.itemName == FilterName[index])
-              .toSet();
-          var filterPrice = filteredName.map((e) => e.itemPrice).toList();
+              .where((element) => element.itemName == filterName[index])
+              .toList();
+          filteredName.sort((a, b) {
+            return a.itemDate.compareTo(b.itemDate);
+          });
+          var filterPrice =
+              filteredName.map((e) => e.itemPrice).toSet().toList();
+
+          var totIncomeSum = 0.0;
+          var totIncome = 0.0;
+          if (filterQuantityForSell.isEmpty) {
+            totIncomeSum = 0;
+          } else {
+            for (int xx = 0; xx < filterPrice.length; xx++) {
+              totIncomeSum += (double.parse(filterPrice[xx]) *
+                  double.parse(filterQuantityForSell[xx]));
+              for (int yy = 0; yy < filterPrice.length; yy++) {
+                totIncome += (double.parse(filterPrice[xx]) *
+                    double.parse(filterQuantityForSell[yy]));
+              }
+            }
+          }
+
           var sortedPrice = filterPrice;
-          var sumPrice = sortedPrice.last;
+          var sumPriceLast = sortedPrice.last;
+
+          var sumPrice = sortedPrice.first;
+
+          var fixedPrice = 0.0;
+          if (double.parse(sumPriceLast) > double.parse(sumPrice)) {
+            var diffrenceBetweenPrice =
+                double.parse(sumPriceLast) - double.parse(sumPrice);
+            fixedPrice = double.parse(sumPriceLast) - diffrenceBetweenPrice;
+          } else if (double.parse(sumPriceLast) == double.parse(sumPrice)) {
+            fixedPrice = double.parse(sumPriceLast);
+          } else {
+            var diffrenceBetweenPrice =
+                double.parse(sumPrice) - double.parse(sumPriceLast);
+            fixedPrice = double.parse(sumPriceLast) + diffrenceBetweenPrice;
+          }
+
+          // Total quantity calculation for the storage items
           var filterQuantity = filteredName.map((e) => e.itemQuantity).toList();
+
           var sumQuantity = 0.0;
           for (int x = 0; x < filteredName.length; x++) {
             sumQuantity += double.parse(filterQuantity[x]);
           }
           double remainingQuantity = sumQuantity - sumQuantityForSell;
+
+          final soldQuantity = sumQuantity - remainingQuantity;
+          var profitSum = 0.0;
+          profitSum = totIncomeSum;
+
           newLabour.add(
             StoragePDFReport(
               id: storageList[index].id.toString(),
               price: sumPrice,
-              name: FilterName[index],
+              name: filterName[index],
               quantity: remainingQuantity.toString(),
               date: DateFormat.yMMMEd().format(
                 DateTime.parse(storageList[index].itemDate),
@@ -74,12 +127,18 @@ class StorageListItem extends StatelessWidget {
             ),
           );
 
+          newModel.add(
+            StorageExample(
+              id: storageList[index].id.toString(),
+              name: filterName[index],
+              profit: profitSum.toString(),
+            ),
+          );
+          Provider.of<ExampleClass>(context, listen: false).fileList = newModel;
           Provider.of<FileHandlerForStorage>(context, listen: false).fileList =
               newLabour;
           return GestureDetector(
-            onTap: () {
-              print('index $index');
-            },
+            onTap: () {},
             child: AnimationConfiguration.staggeredList(
               position: index,
               delay: const Duration(milliseconds: 100),
@@ -161,7 +220,7 @@ class StorageListItem extends StatelessWidget {
                             child: Column(
                               children: [
                                 Text(
-                                  sumPrice,
+                                  sortedPrice.last.toString(),
                                   style: storageItemMoney,
                                 ),
                                 const SizedBox(
@@ -188,7 +247,7 @@ class StorageListItem extends StatelessWidget {
                               title: Padding(
                                 padding: const EdgeInsets.only(bottom: 8.0),
                                 child: Text(
-                                  FilterName[index],
+                                  filterName[index],
                                   style: storageItemName,
                                 ),
                               ),
@@ -205,7 +264,8 @@ class StorageListItem extends StatelessWidget {
                                   ),
                                   Text(
                                     DateFormat.yMMMEd().format(
-                                      DateTime.now(),
+                                      DateTime.parse(
+                                          storageList[index].itemDate),
                                     ),
                                     style: storageItemDate,
                                   ),

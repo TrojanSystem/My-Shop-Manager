@@ -149,7 +149,7 @@ class ItemDetails extends StatelessWidget {
                             ),
                             subtitle: Text(
                               DateFormat.yMMMEd().format(
-                                DateTime.now(),
+                                DateTime.parse(storageList[index].itemDate),
                               ),
                               style: storageItemDate,
                             ),
